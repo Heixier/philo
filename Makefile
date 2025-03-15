@@ -6,12 +6,12 @@
 #    By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/13 17:13:06 by rsiah             #+#    #+#              #
-#    Updated: 2025/02/13 17:28:52 by rsiah            ###   ########.fr        #
+#    Updated: 2025/03/06 16:10:26 by rsiah            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
-SRCS = test.c
+SRCS = philo.c
 
 OBJS = $(SRCS:.c=.o)
 DEPS = $(OBJS:.o=.d)

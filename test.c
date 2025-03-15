@@ -6,45 +6,43 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 17:08:46 by rsiah             #+#    #+#             */
-/*   Updated: 2025/02/14 15:25:18 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/02/21 12:32:52 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 #include <string.h>
 
-void	*sleeper(void *arg)
+typedef struct s_data
 {
-	int	time;
+	pthread_t	id;
+	char		*name;
+}				t_data;
 
-	time = *((int *)arg);
-	printf("Begin sleep for %d seconds\n", time);
-	sleep(time);
-	printf("Ended sleep of %d seconds\n", time);
-	free(arg);
-	return (0);
+
+void	*thread_test(void *data)
+{
+	t_data	*p_data;
+	p_data = (t_data *)data;
+
+	printf("Name of thread is %s\n", p_data -> name);
+	free(p_data);
+	return (NULL);
+}
+
+void	create_thread(char *name)
+{
+	pthread_t	output;
+	t_data		*p_data;
+
+	p_data = calloc(sizeof(p_data), 1);
+	p_data -> name = name;
+	pthread_create(&output, NULL, thread_test, p_data);
+	pthread_join(output, NULL);
 }
 
 int	main(int argc, char **argv)
 {
-	pthread_t	thread_pid[2];
-	int			error;
-	int			*sleep_time;
-
-	if (argc < 2)
-		return (printf("Not enough args\n"), 1);
-	for (int i = 0; i < 2; i++)
-	{
-		sleep_time = malloc(sizeof(int));
-			if (!sleep_time)
-				return (perror("malloc"), 1);
-		*sleep_time = atoi(argv[1]) + i;
-		error = pthread_create(&thread_pid[i], NULL, &sleeper, sleep_time);
-		if (error)
-			return (perror("pthread"), 1);
-		printf("Created sleeper for %d seconds\n", *sleep_time);
-	}
-	pthread_join(thread_pid[0], NULL);
-	pthread_join(thread_pid[1], NULL);
-	return (0);
+	for (int i = 1; i < argc; i++)
+		create_thread(argv[i]);
 }
