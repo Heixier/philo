@@ -6,32 +6,48 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 17:18:02 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/15 18:49:17 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/15 22:05:42 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 // Returns the current timestamp in ms
-long long	p_get_timestamp(long long start_time)
+uintptr_t	p_get_timestamp(int start_time)
 {
-	struct timeval	tv;
-
-	gettimeofday(&tv, NULL);
-	return (((tv.tv_sec * 1000) + (tv.tv_usec / 1000)) - start_time);
+	return (p_get_time_ms() - start_time);
 }
 
 // Sets the start_time in data, also returns if needed
-long long	p_set_start_time(t_data *data)
+uintptr_t	p_set_start_time(t_data *data)
 {
-	struct timeval	tv;
-	long long		time;
+	int	time;
 
-	gettimeofday(&tv, NULL);
-	time = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+	time = p_get_time_ms();
 	data -> start_time = time;
 	return (time);
 }
 
-// tick more accurately, spam a get timeofday with a small usleep until we reach 1000
-int		tick_in_ms()
+// tick more accurately
+void	p_tick_sleep(int wait_time_ms)
+{
+	uintptr_t	start;
+	uintptr_t	elapsed;
+
+	start = p_get_time_ms();
+	elapsed = 0;
+	while (elapsed < wait_time_ms)
+	{
+		elapsed = p_get_time_ms() - start;
+		if (wait_time_ms - elapsed > 1)
+			usleep(100);
+	}
+}
+
+uintptr_t	p_get_time_ms(void)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+}

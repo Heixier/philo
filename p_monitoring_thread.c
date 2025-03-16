@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 18:34:29 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/15 18:47:16 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/16 18:20:34 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,30 +17,38 @@ void	*p_reaper_thread(void *data_struct)
 	t_data	*data;
 
 	data = (t_data *)data_struct;
-	p_tick_hunger(data);
+	while (!data -> stop_flag)
+		p_check_stop_condition(data);
 	return (NULL);
 }
 
-void	p_tick_hunger(t_data *data)
+void	p_check_stop_condition(t_data *data)
 {
 	int	i;
-
-	i = 0;
-	while (!data -> stop_flag)
-	{
-		p_decrement_all_hunger(data);
-		usleep(1000);
-	}
-}
-
-void	p_decrement_all_hunger(t_data *data)
-{
-	int	i;
+	int	hit_eating_limit;
 
 	i = 0;
 	while (i < data -> num_philos)
 	{
-		data -> philos[i].hunger--;
+		hit_eating_limit = 0;
+		if (p_get_time_ms() - data -> philos[i] -> last_eat_ms >= \
+		(data -> time_to_die_ms))
+			p_kill_philosopher_and_stop(data, i);
+		if (data -> eat_limit_flag)
+		{
+			if (data -> philos[i] -> times_eaten >= data -> eat_limit)
+				hit_eating_limit++;
+			if (hit_eating_limit == data -> num_philos)
+				data -> stop_flag = 1;
+			p_announce(data, i, "temp: all philosophers have eaten!");
+		}
 		i++;
 	}
+}
+
+void	p_kill_philosopher_and_stop(t_data *data, int id)
+{
+	data -> stop_flag = 1;
+	data -> philos[id] -> death_flag = 1;
+	p_announce(data, id, "died");
 }

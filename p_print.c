@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 17:13:14 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/15 18:33:54 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/15 21:18:09 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	p_announce(t_data *data, char *id, char *msg)
 	pthread_mutex_unlock(&data -> microphone);
 }
 
-// Just in case I need to print a final msg; should not need this function
+// Just to print the final message after the program has stopped
 int	p_sudo_announce(t_data *data, char *id, char *msg)
 {
 	pthread_mutex_lock(&data -> microphone);

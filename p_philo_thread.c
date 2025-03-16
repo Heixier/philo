@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 15:57:13 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/15 18:39:25 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/16 18:19:07 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,10 @@ void	*p_philo(void *philo_struct)
 	}
 }
 
+// Delay odd numbers, even starts first
 void	p_eat(t_philo *philo)
 {
-	if (philo -> id % 2)
+	if (philo -> id % 2 == 0)
 	{
 		pthread_mutex_lock(&philo -> data -> forks[philo -> id]);
 		p_announce(philo -> data, philo -> id, "has taken a fork");
@@ -45,23 +46,23 @@ void	p_eat(t_philo *philo)
 	}
 	else
 	{
-		usleep(philo -> offset);
-		philo -> offset = 0;
+		p_tick_sleep(philo -> offset_ms);
+		philo -> offset_ms = 0;
 		pthread_mutex_lock(&philo -> data -> \
 			forks[philo -> id + 1 % philo -> data -> num_philos]);
 		p_announce(philo -> data, philo -> id, "has taken a fork");
 		pthread_mutex_lock(&philo -> data -> forks[philo -> id]);
 		p_announce(philo -> data, philo -> id, "has taken a fork");
 	}
-	philo -> hunger += philo -> eating_usec * 2000; // Don't die while eating
-	usleep(philo -> eating_usec);
-	philo -> hunger = philo -> max_hunger;
+	p_tick_sleep(philo -> data -> time_to_eat_ms);
+	philo -> last_eat_ms = p_get_time_ms();
 	pthread_mutex_unlock(&philo -> data -> forks[philo -> id]);
-	pthread_mutex_unlock(&philo -> data -> forks[philo -> id + 1]);
+	pthread_mutex_lock(&philo -> data -> \
+		forks[philo -> id + 1 % philo -> data -> num_philos]);
 }
 
 void	p_sleep(t_philo *philo)
 {
 	p_announce(philo -> data, philo -> id, "is sleeping");
-	usleep(philo -> sleeping_usec);
+	p_tick_sleep(philo -> data -> time_to_sleep_ms);
 }

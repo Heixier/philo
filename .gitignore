@@ -2,4 +2,5 @@
 *.a
 *.o
 *.d
+*.md
 philo
