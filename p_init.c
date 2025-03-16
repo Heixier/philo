@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 18:44:08 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/16 18:58:33 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/16 19:08:00 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,3 +91,10 @@ t_data	*p_initialise_mutexes(t_data *data)
 	return (data);
 }
 
+
+Note to self in case I forget what I was doing
+
+Now I am writing the cleanup function
+After everything is initialised, 
+I will create a readysetgo function to initialise the starting time for everything
+before I run the program
