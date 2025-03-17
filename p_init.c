@@ -6,17 +6,18 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 18:44:08 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/16 19:08:00 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/17 17:12:35 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-t_data	*init_philo_data(int argc, char **argv)
+// Start from here
+t_data	*p_init_philo_data(int argc, char **argv)
 {
 	t_data	*data;
 
-	if (!p_validate(argc, argv));
+	if (!p_validate(argc, argv))
 		return (NULL);
 	data = ft_calloc(sizeof(t_data), 1);
 	if (!data)
@@ -30,18 +31,18 @@ t_data	*init_philo_data(int argc, char **argv)
 		data -> eat_limit_flag = 1;
 		data -> eat_limit = ft_atoi(argv[5]);
 	}
-	if (!init_philosophers(data));
+	if (!p_init_philosophers(data))
 		return (free(data), NULL);
-	if (!initialise_mutexes(data))
-		return (free philosoherrs free data struc)
-
+	if (!p_initialise_mutexes(data))
+		return (p_free_philosophers(data), free(data), NULL);
+	printf("eat limit set: %d\n", data -> eat_limit);
+	return (data);
 }
 
 // Initialises each philosopher and offsets the odd ones so they start later
-t_data	*init_philosophers(t_data *data)
+t_data	*p_init_philosophers(t_data *data)
 {
 	int	i;
-	t_philo	*philo;
 
 	data -> philos = ft_calloc(sizeof(t_philo *), data -> num_philos + 1);
 	if (!data -> philos)
@@ -51,10 +52,12 @@ t_data	*init_philosophers(t_data *data)
 	{
 		data -> philos[i] = ft_calloc(sizeof(t_philo), 1);
 		if (!data -> philos[i])
-			return (p_free_philosophers(data), NULL);
+			return (write(2, "fatal error: cgoh\n", 19), \
+			p_free_philosophers(data), NULL);
 		data -> philos[i] -> id = i;
 		if (i % 2 > 0)
 			data -> philos[i] -> offset_ms = 1;
+		data -> philos[i] -> data = data;
 		i++;
 	}
 	return (data);
@@ -64,37 +67,23 @@ t_data	*p_initialise_mutexes(t_data *data)
 {
 	int	forks;
 	int err;
-	int	i;
 
-	forks = 0;
-	i = 0;
 	data -> forks = ft_calloc(sizeof(pthread_mutex_t), data -> num_philos);
 	if (!data -> forks)
 		return (NULL);
 	if (pthread_mutex_init(&data -> microphone, NULL) != 0)
-		return (write(2, "fatal error: cgoh\n", 19), NULL);
+		return (write(2, "fatal error: cgoh\n", 19), free(data->forks), NULL);
+	forks = 0;
 	while (forks < data -> num_philos)
 	{
 		err = pthread_mutex_init(&data -> forks[forks], NULL);
 		if (err != 0)
 		{
-			while (i < forks)
-			{
-				pthread_mutex_destroy(&data -> forks[i]);
-				i++;
-			}
+			p_destroy_partial_forks(data, forks);
 			pthread_mutex_destroy(&data -> microphone);
-			return (write(2, "fatal error: cgoh\n", 19), NULL);
+			return (write(2, "fatal error: cgoh\n", 19), free(data->forks), NULL);
 		}
 		forks++;
 	}
 	return (data);
 }
-
-
-Note to self in case I forget what I was doing
-
-Now I am writing the cleanup function
-After everything is initialised, 
-I will create a readysetgo function to initialise the starting time for everything
-before I run the program

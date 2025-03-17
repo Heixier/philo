@@ -6,14 +6,14 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 17:18:02 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/15 22:05:42 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/17 17:02:01 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 // Returns the current timestamp in ms
-uintptr_t	p_get_timestamp(int start_time)
+int	p_get_timestamp(uintptr_t start_time)
 {
 	return (p_get_time_ms() - start_time);
 }
@@ -21,10 +21,10 @@ uintptr_t	p_get_timestamp(int start_time)
 // Sets the start_time in data, also returns if needed
 uintptr_t	p_set_start_time(t_data *data)
 {
-	int	time;
+	uintptr_t	time;
 
 	time = p_get_time_ms();
-	data -> start_time = time;
+	data -> start_time_ms = time;
 	return (time);
 }
 
@@ -32,7 +32,7 @@ uintptr_t	p_set_start_time(t_data *data)
 void	p_tick_sleep(int wait_time_ms)
 {
 	uintptr_t	start;
-	uintptr_t	elapsed;
+	int	elapsed;
 
 	start = p_get_time_ms();
 	elapsed = 0;
