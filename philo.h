@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 17:04:41 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/17 16:07:10 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/17 19:51:41 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct s_data
 {
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	microphone;
+	pthread_mutex_t	check_status;
 	t_philo			**philos;
 	uintptr_t		start_time_ms;
 	int				start_flag;
@@ -73,9 +74,12 @@ void		ft_bzero(void *s, size_t n);
 void		*ft_calloc(size_t nmemb, size_t size);
 int			ft_atoi(const char *nptr);
 
+size_t		ft_strlen(const char *s);
+
 // Print
 int			p_announce(t_data *data, int id, char *msg);
 void		p_sudo_announce(t_data *data, int id, char *msg);
+void		p_error_announce(t_data *data, char *err);
 
 // Time
 int			p_get_timestamp(uintptr_t start_time);
@@ -93,5 +97,8 @@ void		p_destroy_mutexes(t_data *data);
 void		p_destroy_partial_forks(t_data *data, \
 	int forks_created_so_far);
 
+// Control
+void		p_stop_program(t_data *data);
+int			p_check_if_stopped(t_data *data);
 
 #endif

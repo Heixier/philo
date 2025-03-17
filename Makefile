@@ -6,12 +6,12 @@
 #    By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/13 17:13:06 by rsiah             #+#    #+#              #
-#    Updated: 2025/03/17 16:00:12 by rsiah            ###   ########.fr        #
+#    Updated: 2025/03/17 19:37:07 by rsiah            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SRCS = philo.c p_cleanup.c p_init.c p_lib.c p_monitoring_thread.c \
-p_philo_thread.c p_print.c p_start.c p_time.c p_validate.c
+p_philo_thread.c p_print.c p_start.c p_time.c p_validate.c p_control.c
 
 OBJS = $(SRCS:.c=.o)
 DEPS = $(OBJS:.o=.d)

@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 15:57:13 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/17 17:41:20 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/17 20:05:43 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,19 +21,16 @@ void	*p_philo(void *philo_struct)
 	t_philo	*philo;
 
 	philo = (t_philo *)philo_struct;
-	while (!philo -> data -> start_flag && !philo -> data -> stop_flag)
-		;
-		// p_announce(philo -> data, philo -> id, "is spinning");
 	while (1)
 	{
-		if (philo -> data -> stop_flag|| philo -> death_flag)
+		if (p_check_if_stopped(philo -> data) || philo -> death_flag)
 			return (NULL);
 		// Not dead
 		p_eat(philo);
-		if (philo -> data -> stop_flag || philo -> death_flag)
+		if (p_check_if_stopped(philo -> data) || philo -> death_flag)
 			return (NULL);
 		p_sleep(philo);
-		if (philo -> data -> stop_flag|| philo -> death_flag)
+		if (p_check_if_stopped(philo -> data) || philo -> death_flag)
 			return (NULL);
 		p_announce(philo -> data, philo -> id, "is thinking");
 	}
@@ -44,14 +41,19 @@ static void	p_eat(t_philo *philo)
 {
 	if (philo -> id % 2 == 0)
 	{
-		philo -> offset_ms = 1;
-		p_tick_sleep(philo -> offset_ms);
+		// philo -> offset_ms = 1;
+		// p_tick_sleep(philo -> offset_ms);
 		// philo -> offset_ms = 0;
 		pthread_mutex_lock(&philo -> data -> forks[philo -> id]);
-		p_announce(philo -> data, philo -> id, "has taken a fork");
+		p_announce(philo -> data, philo -> id, "has taken a first fork");
+		if (p_check_if_stopped(philo -> data))
+		{
+			pthread_mutex_unlock(&philo -> data -> forks[philo ->id]);
+			return ;
+		}
 		pthread_mutex_lock(&philo -> data -> \
 			forks[(philo -> id + 1) % (philo -> data -> num_philos)]);
-		p_announce(philo -> data, philo -> id, "has taken a fork");
+		p_announce(philo -> data, philo -> id, "has taken a second fork");
 	}
 	else
 	{
@@ -61,9 +63,14 @@ static void	p_eat(t_philo *philo)
 		// philo -> offset_ms = 0;
 		pthread_mutex_lock(&philo -> data -> \
 			forks[(philo -> id + 1) % (philo -> data -> num_philos)]);
-		p_announce(philo -> data, philo -> id, "has taken a fork");
+		p_announce(philo -> data, philo -> id, "has taken a first fork");
+		if (p_check_if_stopped(philo -> data))
+		{
+			pthread_mutex_unlock(&philo -> data -> forks[philo ->id]);
+			return ;
+		}
 		pthread_mutex_lock(&philo -> data -> forks[philo -> id]);
-		p_announce(philo -> data, philo -> id, "has taken a fork");
+		p_announce(philo -> data, philo -> id, "has taken a second fork");
 	}
 	p_announce(philo -> data, philo -> id, "is eating");
 	philo -> last_eat_ms = p_get_time_ms();

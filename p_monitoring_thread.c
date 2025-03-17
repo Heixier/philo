@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 18:34:29 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/17 17:52:24 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/17 20:05:07 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ void	*p_reaper_thread(void *data_struct)
 	t_data	*data;
 
 	data = (t_data *)data_struct;
-	while (!data -> start_flag && !data -> stop_flag)
-		;
 	while (!data -> stop_flag)
 		p_check_stop_condition(data);
 	return (NULL);
@@ -44,6 +42,7 @@ static void	p_check_stop_condition(t_data *data)
 			// 	data -> philos[i] -> last_eat_ms, \
 			// 	p_get_time_ms() - data -> philos[i] -> last_eat_ms);
 			p_kill_philosopher_and_stop(data, i);
+			return ;
 		}
 		if (data -> eat_limit_flag)
 		{
@@ -51,7 +50,7 @@ static void	p_check_stop_condition(t_data *data)
 				hit_eating_limit++;
 			if (hit_eating_limit == data -> num_philos)
 			{
-				data -> stop_flag = 1;
+				p_stop_program(data);
 				p_sudo_announce(data, i, "temp: all philosophers have eaten!");
 			}
 		}
@@ -61,7 +60,10 @@ static void	p_check_stop_condition(t_data *data)
 
 static void	p_kill_philosopher_and_stop(t_data *data, int id)
 {
+	pthread_mutex_lock(&data -> check_status);
 	data -> stop_flag = 1;
 	data -> philos[id] -> death_flag = 1;
+	pthread_mutex_unlock(&data -> check_status);
 	p_sudo_announce(data, id, "died");
 }
+
