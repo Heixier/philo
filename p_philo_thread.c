@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 15:57:13 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/17 16:54:32 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/17 17:41:20 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,9 @@ static void	p_eat(t_philo *philo)
 {
 	if (philo -> id % 2 == 0)
 	{
+		philo -> offset_ms = 1;
+		p_tick_sleep(philo -> offset_ms);
+		// philo -> offset_ms = 0;
 		pthread_mutex_lock(&philo -> data -> forks[philo -> id]);
 		p_announce(philo -> data, philo -> id, "has taken a fork");
 		pthread_mutex_lock(&philo -> data -> \
@@ -52,17 +55,20 @@ static void	p_eat(t_philo *philo)
 	}
 	else
 	{
+		philo -> offset_ms = 1;
+		// p_tick_sleep(philo -> offset_ms);
 		p_tick_sleep(philo -> offset_ms);
-		philo -> offset_ms = 0;
+		// philo -> offset_ms = 0;
 		pthread_mutex_lock(&philo -> data -> \
 			forks[(philo -> id + 1) % (philo -> data -> num_philos)]);
 		p_announce(philo -> data, philo -> id, "has taken a fork");
 		pthread_mutex_lock(&philo -> data -> forks[philo -> id]);
 		p_announce(philo -> data, philo -> id, "has taken a fork");
 	}
-	p_tick_sleep(philo -> data -> time_to_eat_ms);
+	p_announce(philo -> data, philo -> id, "is eating");
 	philo -> last_eat_ms = p_get_time_ms();
 	philo -> times_eaten++;
+	p_tick_sleep(philo -> data -> time_to_eat_ms);
 	pthread_mutex_unlock(&philo -> data -> forks[philo -> id]);
 	pthread_mutex_unlock(&philo -> data -> \
 		forks[(philo -> id + 1) % (philo -> data -> num_philos)]);

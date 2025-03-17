@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 18:44:08 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/17 17:12:35 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/17 17:51:57 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ t_data	*p_init_philo_data(int argc, char **argv)
 		return (free(data), NULL);
 	if (!p_initialise_mutexes(data))
 		return (p_free_philosophers(data), free(data), NULL);
-	printf("eat limit set: %d\n", data -> eat_limit);
 	return (data);
 }
 
