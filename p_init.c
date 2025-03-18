@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 18:44:08 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/18 15:33:02 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/18 16:29:39 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,11 +67,8 @@ t_data	*p_initialise_mutexes(t_data *data)
 	int	forks;
 	int err;
 
-	if (pthread_mutex_init(&data -> microphone, NULL) != 0)
+	if (pthread_mutex_init(&data -> mutex, NULL) != 0)
 		return (p_error_announce(data, "fatal error: cgoh\n"), NULL);
-	if (pthread_mutex_init(&data -> edit, NULL) != 0)
-		return (pthread_mutex_destroy(&data -> microphone), \
-		p_error_announce(data, "fatal error: cgoh\n"), NULL);
 	data -> forks = ft_calloc(sizeof(pthread_mutex_t), data -> num_philos);
 	if (!data -> forks)
 		return (NULL);
@@ -82,8 +79,7 @@ t_data	*p_initialise_mutexes(t_data *data)
 		if (err != 0)
 		{
 			p_destroy_partial_forks(data, forks);
-			pthread_mutex_destroy(&data -> microphone);
-			pthread_mutex_destroy(&data -> edit);
+			pthread_mutex_destroy(&data -> mutex);
 			return (write(2, "fatal error: cgoh\n", 19), free(data->forks), NULL);
 		}
 		forks++;

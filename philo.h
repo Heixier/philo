@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 17:04:41 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/18 16:07:43 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/18 16:28:05 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,7 @@ typedef struct s_philo	t_philo;
 typedef struct s_data
 {
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	microphone;
-	pthread_mutex_t	edit;
+	pthread_mutex_t	mutex;
 	t_philo			**philos;
 	uintptr_t		start_time_ms;
 	int				stop_flag;
