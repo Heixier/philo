@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 17:13:14 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/18 16:28:27 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/18 16:41:10 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,6 @@ int	p_announce(t_data *data, int id, char *msg)
 		return (FAILURE);
 	pthread_mutex_lock(&data -> mutex);
 	printf("%d %d %s\n", p_get_timestamp(data -> start_time_ms), id, msg);
-	for (int i = 0; i < data -> num_philos; i++)
-	{
-		printf("Philosopher %d status: last_eat: %ld\n", i, data -> philos[i] -> last_eat_ms);
-	}
 	pthread_mutex_unlock(&data -> mutex);
 	return (SUCCESS);
 }
