@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 18:43:25 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/17 14:33:31 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/18 15:33:12 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ void	p_destroy_mutexes(t_data *data)
 		i++;
 	}
 	pthread_mutex_destroy(&data -> microphone);
+	pthread_mutex_destroy(&data -> edit);
 }
 
 // Final cleanup assuming everything was successfully initialised
@@ -59,7 +60,6 @@ void	p_cleanup(t_data *data)
 	i = 0;
 	p_free_philosophers(data);
 	free(data -> philos);
-	pthread_mutex_destroy(&data -> microphone);
 	p_destroy_mutexes(data);
 	free(data -> forks);
 	free(data);

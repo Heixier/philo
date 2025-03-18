@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 18:44:08 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/17 19:31:25 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/18 15:33:02 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ t_data	*p_init_philosophers(t_data *data)
 			return (p_error_announce(data, "fatal error: cgoh\n"), \
 			p_free_philosophers(data), NULL);
 		data -> philos[i] -> id = i;
-		if (i % 2 > 0)
-			data -> philos[i] -> offset_ms = 1;
+		// if (i % 2 > 0) // start them later, all of them, not fix them to offset
+		// 	data -> philos[i] -> offset_ms = 1;
 		data -> philos[i] -> data = data;
 		i++;
 	}
@@ -69,7 +69,7 @@ t_data	*p_initialise_mutexes(t_data *data)
 
 	if (pthread_mutex_init(&data -> microphone, NULL) != 0)
 		return (p_error_announce(data, "fatal error: cgoh\n"), NULL);
-	if (pthread_mutex_init(&data -> check_status, NULL) != 0)
+	if (pthread_mutex_init(&data -> edit, NULL) != 0)
 		return (pthread_mutex_destroy(&data -> microphone), \
 		p_error_announce(data, "fatal error: cgoh\n"), NULL);
 	data -> forks = ft_calloc(sizeof(pthread_mutex_t), data -> num_philos);
@@ -83,7 +83,7 @@ t_data	*p_initialise_mutexes(t_data *data)
 		{
 			p_destroy_partial_forks(data, forks);
 			pthread_mutex_destroy(&data -> microphone);
-			pthread_mutex_destroy(&data -> check_status);
+			pthread_mutex_destroy(&data -> edit);
 			return (write(2, "fatal error: cgoh\n", 19), free(data->forks), NULL);
 		}
 		forks++;

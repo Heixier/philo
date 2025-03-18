@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 17:13:14 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/17 19:38:51 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/18 14:19:30 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,14 @@
 
 int	p_announce(t_data *data, int id, char *msg)
 {
-	pthread_mutex_lock(&data -> check_status);
 	if (data -> stop_flag)
-		return (pthread_mutex_unlock(&data -> check_status), FAILURE);
-	pthread_mutex_unlock(&data -> check_status);
+		return (FAILURE);
 	pthread_mutex_lock(&data -> microphone);
 	printf("%d %d %s\n", p_get_timestamp(data -> start_time_ms), id, msg);
+	for (int i = 0; i < data -> num_philos; i++)
+	{
+		printf("Philosopher %d status: last_eat: %ld\n", i, data -> philos[i] -> last_eat_ms);
+	}
 	pthread_mutex_unlock(&data -> microphone);
 	return (SUCCESS);
 }
