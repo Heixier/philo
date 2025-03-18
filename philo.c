@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 23:18:17 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/18 16:10:30 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/18 16:36:14 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,5 @@ void	p_print_debug_individual(t_philo *philo)
 {
 	printf("Start time: %ld\n", philo -> data -> start_time_ms);
 	printf("\nPhilosopher id %d:\n\nTimes eaten: %d\nLast ate at: %ld\nElapsed: %ld\n", \
-	philo -> id, philo -> times_eaten, philo -> last_eat_ms, philo -> last_eat_ms - philo -> data -> start_time_ms);
+	philo -> id, philo -> times_eaten, philo -> last_eat_ms, p_get_time_ms() - philo -> last_eat_ms);
 }
