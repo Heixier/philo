@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 23:18:17 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/18 16:36:14 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/19 20:21:56 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,9 @@ data -> time_to_eat_ms, data -> time_to_sleep_ms, data -> eat_limit_flag, data -
 
 void	p_print_debug_individual(t_philo *philo)
 {
+	pthread_mutex_lock(&philo -> data -> print);
 	printf("Start time: %ld\n", philo -> data -> start_time_ms);
 	printf("\nPhilosopher id %d:\n\nTimes eaten: %d\nLast ate at: %ld\nElapsed: %ld\n", \
 	philo -> id, philo -> times_eaten, philo -> last_eat_ms, p_get_time_ms() - philo -> last_eat_ms);
+	pthread_mutex_unlock(&philo -> data -> print);
 }

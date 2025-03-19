@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:36:04 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/19 14:42:06 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/19 20:20:05 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ int	p_start_philosopher_threads(t_data *data)
 	// pthread_mutex_unlock(&data -> mutex);
 	pthread_create(&thread_ids[data -> num_philos], NULL, p_monitoring_thread, data);
 	p_join_threads(thread_ids, data -> num_philos);
+	free(thread_ids);
 	return (SUCCESS);
 }
 

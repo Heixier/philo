@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 18:43:25 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/18 16:29:02 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/19 20:11:32 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@ void	p_destroy_mutexes(t_data *data)
 		pthread_mutex_destroy(&data -> forks[i]);
 		i++;
 	}
-	pthread_mutex_destroy(&data -> mutex);
+	pthread_mutex_destroy(&data -> data);
+	pthread_mutex_destroy(&data -> print);
 }
 
 // Final cleanup assuming everything was successfully initialised

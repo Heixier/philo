@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 18:44:08 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/18 16:29:39 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/19 20:11:21 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,11 +67,16 @@ t_data	*p_initialise_mutexes(t_data *data)
 	int	forks;
 	int err;
 
-	if (pthread_mutex_init(&data -> mutex, NULL) != 0)
-		return (p_error_announce(data, "fatal error: cgoh\n"), NULL);
 	data -> forks = ft_calloc(sizeof(pthread_mutex_t), data -> num_philos);
 	if (!data -> forks)
 		return (NULL);
+	if (pthread_mutex_init(&data -> data, NULL) != 0)
+		return (p_error_announce(data, "fatal error: cgoh\n"), NULL);
+	if (pthread_mutex_init(&data -> print, NULL) != 0)
+	{
+		pthread_mutex_destroy(&data -> data);
+		return (p_error_announce(data, "fatal error: cgoh\n"), NULL);
+	}
 	forks = 0;
 	while (forks < data -> num_philos)
 	{
@@ -79,7 +84,8 @@ t_data	*p_initialise_mutexes(t_data *data)
 		if (err != 0)
 		{
 			p_destroy_partial_forks(data, forks);
-			pthread_mutex_destroy(&data -> mutex);
+			pthread_mutex_destroy(&data -> data);
+			pthread_mutex_destroy(&data -> print);
 			return (write(2, "fatal error: cgoh\n", 19), free(data->forks), NULL);
 		}
 		forks++;

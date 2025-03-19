@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 17:04:41 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/19 14:26:01 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/19 20:48:31 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ typedef struct s_philo	t_philo;
 typedef struct s_data
 {
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	mutex;
+	pthread_mutex_t	data;
+	pthread_mutex_t	print;
 	t_philo			**philos;
 	uintptr_t		start_time_ms;
 	int				stop_flag;
@@ -98,13 +99,16 @@ int			p_check_if_stopped(t_data *data);
 
 
 // Threads
-
 int		p_start_philosopher_threads(t_data *data);
 void	*p_philo_thread(void *philo_struct);
 int		p_join_threads(pthread_t *thread_ids, int count);
 
 int		p_is_dead(t_philo *philo);
-int		p_check_if_any_are_dead(t_data *data);
+int		p_report_if_any_are_dead(t_data *data);
 void	*p_monitoring_thread(void *data_struct);
+
+// Actions
+int	p_even_philo_actions(t_philo *philo);
+int	p_odd_philo_actions(t_philo *philo);
 
 #endif
