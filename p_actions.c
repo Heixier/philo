@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   p_philo_actions.c                                  :+:      :+:    :+:   */
+/*   p_actions.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:26:49 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/18 16:38:38 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/19 14:47:30 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ void	*p_philo_thread(void *philo_struct)
 		p_announce(philo -> data, philo -> id, "is sleeping");
 		p_tick_sleep(philo -> data -> time_to_sleep_ms);
 		p_announce(philo -> data, philo -> id, "is thinking");
-		pthread_mutex_lock(&philo -> data -> mutex);
-		p_print_debug_individual(philo);
-		pthread_mutex_unlock(&philo -> data -> mutex);
+		// pthread_mutex_lock(&philo -> data -> mutex);
+		// p_print_debug_individual(philo);
+		// pthread_mutex_unlock(&philo -> data -> mutex);
 	}
 	pthread_mutex_lock(&philo -> data -> mutex);
 	printf("%d stopped at %dms\n", philo -> id, p_get_timestamp(philo -> data -> start_time_ms));

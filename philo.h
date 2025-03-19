@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 17:04:41 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/18 16:28:05 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/19 14:26:01 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 
 # define SUCCESS 1
 # define FAILURE 0
+# define MON_THREADS 1
 
 typedef struct s_philo	t_philo;
 
@@ -101,5 +102,9 @@ int			p_check_if_stopped(t_data *data);
 int		p_start_philosopher_threads(t_data *data);
 void	*p_philo_thread(void *philo_struct);
 int		p_join_threads(pthread_t *thread_ids, int count);
+
+int		p_is_dead(t_philo *philo);
+int		p_check_if_any_are_dead(t_data *data);
+void	*p_monitoring_thread(void *data_struct);
 
 #endif
