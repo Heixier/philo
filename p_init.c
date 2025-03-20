@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 18:44:08 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/19 20:11:21 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/20 21:20:59 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ t_data	*p_init_philosophers(t_data *data)
 			return (p_error_announce(data, "fatal error: cgoh\n"), \
 			p_free_philosophers(data), NULL);
 		data -> philos[i] -> id = i;
-		// if (i % 2 > 0) // start them later, all of them, not fix them to offset
-		// 	data -> philos[i] -> offset_ms = 1;
+		// if (i % 2 == 0) // start them later, all of them, not fix them to offset
+		// 	data -> philos[i] -> offset_ms = 10;
 		data -> philos[i] -> data = data;
 		i++;
 	}

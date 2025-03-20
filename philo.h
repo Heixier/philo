@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 17:04:41 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/19 20:48:31 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/20 21:23:36 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void		p_free_philosophers(t_data *data);
 // Control
 void		p_stop_program(t_data *data);
 int			p_check_if_stopped(t_data *data);
-
+int			p_hit_eat_limit(t_data *data);
 
 
 // Threads
@@ -103,12 +103,15 @@ int		p_start_philosopher_threads(t_data *data);
 void	*p_philo_thread(void *philo_struct);
 int		p_join_threads(pthread_t *thread_ids, int count);
 
-int		p_is_dead(t_philo *philo);
 int		p_report_if_any_are_dead(t_data *data);
 void	*p_monitoring_thread(void *data_struct);
 
 // Actions
-int	p_even_philo_actions(t_philo *philo);
-int	p_odd_philo_actions(t_philo *philo);
+int		p_even_philo_actions(t_philo *philo);
+int		p_odd_philo_actions(t_philo *philo);
+int		p_grab_forks(t_philo *philo, int first_id, int second_id);
+void	p_put_down_forks(t_data *data, int first_id, int second_id);
+int		p_eat(t_philo *philo);
+int		p_sleep(t_philo *philo);
 
 #endif

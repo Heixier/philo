@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:36:04 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/19 20:20:05 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/20 21:33:21 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,13 @@ int	p_start_philosopher_threads(t_data *data)
 	if (!thread_ids)
 		return (p_error_announce(data, "fatal: cgoh"), FAILURE);
 	data -> start_time_ms = p_get_time_ms(); // No thread started yet
-	// pthread_mutex_lock(&data -> mutex);
 	while (i < data -> num_philos)
 	{
 		pthread_create(&thread_ids[i], NULL, p_philo_thread, data -> philos[i]);
+		// if (i % 2 == 0)
+			// p_tick_sleep(1 + (data -> num_philos / 10)); // delay start
 		i++;
 	}
-	// pthread_mutex_unlock(&data -> mutex);
 	pthread_create(&thread_ids[data -> num_philos], NULL, p_monitoring_thread, data);
 	p_join_threads(thread_ids, data -> num_philos);
 	free(thread_ids);

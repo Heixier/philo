@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 17:18:02 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/18 14:13:37 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/20 21:15:41 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ void	p_tick_sleep(int wait_time_ms)
 	while (elapsed < wait_time_ms)
 	{
 		elapsed = p_get_time_ms() - start;
-		// if (wait_time_ms - elapsed > 1)
-		// 	usleep(100);
+		if (wait_time_ms - elapsed > 1)
+			usleep(100);
 	}
 }
 
@@ -51,3 +51,13 @@ uintptr_t	p_get_time_ms(void)
 	gettimeofday(&tv, NULL);
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
+
+// // Sleep until timestamp
+// void	p_sleep_until(uintptr_t delay_ms)
+// {
+// 	struct 		timeval tv;
+// 	uintptr_t	curr;
+
+// 	gettimeofday(&tv, NULL);
+// 	while (tv.tv_usec)
+// }
