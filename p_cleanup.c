@@ -24,6 +24,18 @@ void	p_free_philosophers(t_data *data)
 	}
 }
 
+void	p_destroy_partial_eat_locks(t_philo *philo, int created_so_far)
+{
+	int	i;
+
+	i = 0;
+	while (i < created_so_far)
+	{
+		pthread_mutex_destroy(&philo -> eat);
+		i++;
+	}
+}
+
 // Destroy up to forks_created_so_far; latest fork failed to create
 void	p_destroy_partial_forks(t_data *data, int forks_created_so_far)
 {
@@ -55,9 +67,6 @@ void	p_destroy_mutexes(t_data *data)
 // Final cleanup assuming everything was successfully initialised
 void	p_cleanup(t_data *data)
 {
-	int	i;
-
-	i = 0;
 	p_free_philosophers(data);
 	free(data -> philos);
 	p_destroy_mutexes(data);

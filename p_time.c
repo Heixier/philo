@@ -31,19 +31,19 @@ uintptr_t	p_set_start_time(t_data *data)
 // tick more accurately
 void	p_tick_sleep(int wait_time_ms)
 {
-	uintptr_t	start;
-	int	elapsed;
+	uintptr_t	wait_time_us;
+	uintptr_t	elapsed;
 
-	start = p_get_time_ms();
 	elapsed = 0;
-	while (elapsed < wait_time_ms)
+	wait_time_us = wait_time_ms * 1000;
+	while (elapsed < wait_time_us)
 	{
-		elapsed = p_get_time_ms() - start;
-		if (wait_time_ms - elapsed > 1)
-			usleep(100);
+		usleep(TIME_INCREMENT);
+		elapsed += TIME_INCREMENT;
 	}
 }
 
+// Do not spam this, gettimeofday is expensive
 uintptr_t	p_get_time_ms(void)
 {
 	struct timeval	tv;

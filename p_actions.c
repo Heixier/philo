@@ -19,12 +19,9 @@ void	*p_philo_thread(void *philo_struct)
 
 	philo = (t_philo *)philo_struct;
 	id = philo -> id;
-	pthread_mutex_lock(&philo -> data -> data);
-	philo -> last_eat_ms = p_get_time_ms();
-	pthread_mutex_lock(&philo -> data -> print);
-	printf("Intialised philo %d time_to_eat to %d\n", philo -> id, p_get_timestamp(philo -> data -> start_time_ms));
-	pthread_mutex_unlock(&philo -> data -> print);
-	pthread_mutex_unlock(&philo -> data -> data);
+	pthread_mutex_lock(&philo -> eat);
+	philo -> last_eat_ms = philo -> data -> start_time_ms;
+	pthread_mutex_unlock(&philo -> eat);
 	while (1)
 	{
 		if (id % 2 == 0)
@@ -37,9 +34,6 @@ void	*p_philo_thread(void *philo_struct)
 			if (!p_odd_philo_actions(philo))
 				return (NULL);
 		}
-		// pthread_mutex_lock(&philo -> data -> mutex);
-		// p_print_debug_individual(philo);
-		// pthread_mutex_unlock(&philo -> data -> mutex);
 	}
 	return (NULL);
 }
@@ -63,6 +57,7 @@ int	p_even_philo_actions(t_philo *philo)
 	if (p_check_if_stopped(philo -> data))
 		return (0);
 	p_announce(philo -> data, philo -> id, "is thinking");
+	p_tick_sleep(1);
 	return (1);
 }
 
@@ -84,6 +79,7 @@ int	p_odd_philo_actions(t_philo *philo)
 	if (p_check_if_stopped(philo -> data))
 		return (0);
 	p_announce(philo -> data, philo -> id, "is thinking");
+	p_tick_sleep(1);
 	return (1);
 }
 
@@ -124,10 +120,10 @@ int	p_eat(t_philo *philo)
 {
 	if (p_check_if_stopped(philo -> data))
 		return (0);
-	pthread_mutex_lock(&philo -> data -> data);
+	pthread_mutex_lock(&philo -> eat);
 	philo -> last_eat_ms = p_get_time_ms();
 	philo -> times_eaten++;
-	pthread_mutex_unlock(&philo -> data -> data);
+	pthread_mutex_unlock(&philo -> eat);
 	p_announce(philo -> data, philo -> id, "is eating");
 	p_tick_sleep(philo -> data -> time_to_eat_ms);
 	return (1);

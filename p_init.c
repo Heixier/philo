@@ -54,9 +54,13 @@ t_data	*p_init_philosophers(t_data *data)
 			return (p_error_announce(data, "fatal error: cgoh\n"), \
 			p_free_philosophers(data), NULL);
 		data -> philos[i] -> id = i;
-		// if (i % 2 == 0) // start them later, all of them, not fix them to offset
-		// 	data -> philos[i] -> offset_ms = 10;
 		data -> philos[i] -> data = data;
+		if (pthread_mutex_init(&data -> philos[i] -> eat, NULL) != 0)
+		{
+			p_destroy_partial_eat_locks(data -> philos[i], i);
+			p_free_philosophers(data);
+			return (NULL);
+		}
 		i++;
 	}
 	return (data);

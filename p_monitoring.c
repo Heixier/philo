@@ -17,32 +17,36 @@ int	p_report_if_any_are_dead(t_data *data)
 {
 	int	i;
 	int	dead;
-	uintptr_t	temp;
+	uintptr_t	time_elapsed;
+	uintptr_t	time;
 	
 	i = 0;
 	dead = 0;
 	while (i < data -> num_philos)
 	{
-		pthread_mutex_lock(&data -> data);
-		temp = p_get_time_ms() - data -> philos[i] -> last_eat_ms;
-		pthread_mutex_unlock(&data -> data);
-		// if ((p_get_time_ms() - data -> philos[i] -> last_eat_ms > \
-		// (uintptr_t)(data -> time_to_die_ms)))
-		if (temp > (uintptr_t)(data -> time_to_die_ms))
+		// p_print_debug_individual(data -> philos[i]);
+		time = p_get_time_ms();
+		pthread_mutex_lock(&data -> philos[i] -> eat);
+		time_elapsed = time - data -> philos[i] -> last_eat_ms;
+		pthread_mutex_unlock(&data -> philos[i] -> eat);
+		// if (time_elapsed > (uintptr_t)(data->time_to_die_ms - 50)) {  // Warning when getting close
+		// 	pthread_mutex_lock(&data->print);
+		// 	printf("WARNING: Philo %d - %lu ms since last meal (limit: %d)\n", 
+		// 		   i, time_elapsed, data->time_to_die_ms);
+		// 	pthread_mutex_unlock(&data->print);
+		// }
+		if (time_elapsed > (uintptr_t)(data -> time_to_die_ms))
 		{
-			pthread_mutex_lock(&data -> data);
-			data -> stop_flag = 1;
-			pthread_mutex_unlock(&data -> data);
+			p_stop_program(data);
 			dead = 1;
 			break ;
 		}
 		i++;
 	}
-
 	if (dead)
 	{
 		pthread_mutex_lock(&data -> print);
-		printf("philo %d died at %ld due to %ld elapsed\n", i, p_get_time_ms(), temp);
+		// printf("philo %d died at %ld due to %ld elapsed\n", i, p_get_time_ms(), temp);
 		printf("%d %d died\n", p_get_timestamp(data -> start_time_ms), i);
 		return (pthread_mutex_unlock(&data -> print), 1);
 	}
@@ -54,13 +58,14 @@ void	*p_monitoring_thread(void *data_struct)
 	t_data	*data;
 
 	data = (t_data *)data_struct;
-	p_tick_sleep(data -> time_to_die_ms);
+	p_tick_sleep(10);
 	while (1)
 	{
 		if (p_report_if_any_are_dead(data))
 			return (NULL);
 		if (data -> eat_limit_flag && p_hit_eat_limit(data))
 			return (p_stop_program(data), NULL);
+		usleep(1000);
 	}
 	return (NULL);	
 }
@@ -72,15 +77,15 @@ int	p_hit_eat_limit(t_data *data)
 
 	i = 0;
 	full_philos = 0;
-	pthread_mutex_lock(&data -> data);
 	while (i < data -> num_philos)
 	{
+		pthread_mutex_lock(&data -> philos[i] -> eat);
 		if (data -> philos[i] -> times_eaten >= data -> eat_limit)
 			full_philos++;
+		pthread_mutex_unlock(&data -> philos[i] -> eat);
 		i++;
 	}
 	if (full_philos == data -> num_philos)
-		return (pthread_mutex_unlock(&data -> data), 1);
-	pthread_mutex_unlock(&data -> data);
+		return (1);
 	return (0);
 }

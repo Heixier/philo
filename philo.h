@@ -23,6 +23,7 @@
 # define SUCCESS 1
 # define FAILURE 0
 # define MON_THREADS 1
+# define TIME_INCREMENT 100
 
 typedef struct s_philo	t_philo;
 
@@ -44,11 +45,12 @@ typedef struct s_data
 
 typedef struct s_philo
 {
-	uintptr_t	last_eat_ms;
-	int			id;
-	int			times_eaten;
-	int			death_flag;
-	int			offset_ms;
+	pthread_mutex_t	eat;
+	uintptr_t		last_eat_ms;
+	int				id;
+	int				times_eaten;
+	int				death_flag;
+	int				offset_ms;
 	t_data		*data;
 }				t_philo;
 
@@ -90,6 +92,7 @@ int			p_validate(int argc, char **argv);
 void		p_cleanup(t_data *data);
 void		p_destroy_mutexes(t_data *data);
 void		p_destroy_partial_forks(t_data *data, int forks_created_so_far);
+void		p_destroy_partial_eat_locks(t_philo *philo, int created_so_far);
 void		p_free_philosophers(t_data *data);
 
 // Control
