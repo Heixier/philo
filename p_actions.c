@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:26:49 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/20 21:51:15 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/22 21:46:00 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,9 @@ void	*p_philo_thread(void *philo_struct)
 
 	philo = (t_philo *)philo_struct;
 	id = philo -> id;
-	pthread_mutex_lock(&philo -> data -> data);
+	// pthread_mutex_lock(&philo -> lock);
 	philo -> last_eat_ms = p_get_time_ms();
-	pthread_mutex_lock(&philo -> data -> print);
-	printf("Intialised philo %d time_to_eat to %d\n", philo -> id, p_get_timestamp(philo -> data -> start_time_ms));
-	pthread_mutex_unlock(&philo -> data -> print);
-	pthread_mutex_unlock(&philo -> data -> data);
+	// pthread_mutex_unlock(&philo -> lock);
 	while (1)
 	{
 		if (id % 2 == 0)
@@ -97,9 +94,6 @@ int	p_grab_forks(t_philo *philo, int first_id, int second_id)
 		pthread_mutex_unlock(&philo -> data -> forks[first_id]);
 		return (FAILURE);
 	}
-	// pthread_mutex_lock(&philo -> data -> data);
-	// printf("%d first fork taken at %ld\n", philo -> id, p_get_time_ms());
-	// pthread_mutex_unlock(&philo -> data -> data);
 	pthread_mutex_lock(&philo -> data -> forks[second_id]);
 	if (p_check_if_stopped(philo -> data))
 	{
@@ -108,9 +102,6 @@ int	p_grab_forks(t_philo *philo, int first_id, int second_id)
 		return (FAILURE);
 	}
 	p_announce(philo -> data, philo -> id, "has taken a fork");
-	// pthread_mutex_lock(&philo -> data -> data);
-	// printf("%d second fork taken at %ld\n", philo -> id, p_get_time_ms());
-	// pthread_mutex_unlock(&philo -> data -> data);
 	return (SUCCESS);
 }
 
@@ -124,10 +115,10 @@ int	p_eat(t_philo *philo)
 {
 	if (p_check_if_stopped(philo -> data))
 		return (0);
-	pthread_mutex_lock(&philo -> data -> data);
+	// pthread_mutex_lock(&philo -> lock);
 	philo -> last_eat_ms = p_get_time_ms();
 	philo -> times_eaten++;
-	pthread_mutex_unlock(&philo -> data -> data);
+	// pthread_mutex_unlock(&philo -> lock);
 	p_announce(philo -> data, philo -> id, "is eating");
 	p_tick_sleep(philo -> data -> time_to_eat_ms);
 	return (1);

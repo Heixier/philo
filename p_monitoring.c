@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 17:06:57 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/20 21:49:45 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/22 21:35:49 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,22 +17,22 @@ int	p_report_if_any_are_dead(t_data *data)
 {
 	int	i;
 	int	dead;
-	uintptr_t	temp;
+	uintptr_t	elapsed;
 	
 	i = 0;
 	dead = 0;
 	while (i < data -> num_philos)
 	{
-		pthread_mutex_lock(&data -> data);
-		temp = p_get_time_ms() - data -> philos[i] -> last_eat_ms;
-		pthread_mutex_unlock(&data -> data);
+		// pthread_mutex_lock(&data -> philos[i] -> lock);
+		elapsed = p_get_time_ms() - data -> philos[i] -> last_eat_ms;
+		// pthread_mutex_unlock(&data -> philos[i] -> lock);
 		// if ((p_get_time_ms() - data -> philos[i] -> last_eat_ms > \
 		// (uintptr_t)(data -> time_to_die_ms)))
-		if (temp > (uintptr_t)(data -> time_to_die_ms))
+		if (elapsed > (uintptr_t)(data -> time_to_die_ms))
 		{
-			pthread_mutex_lock(&data -> data);
+			// pthread_mutex_lock(&data -> data);
 			data -> stop_flag = 1;
-			pthread_mutex_unlock(&data -> data);
+			// pthread_mutex_unlock(&data -> data);
 			dead = 1;
 			break ;
 		}
@@ -42,7 +42,7 @@ int	p_report_if_any_are_dead(t_data *data)
 	if (dead)
 	{
 		pthread_mutex_lock(&data -> print);
-		printf("philo %d died at %ld due to %ld elapsed\n", i, p_get_time_ms(), temp);
+		printf("philo %d died at %ld due to %ld elapsed\n", i, p_get_time_ms(), elapsed);
 		printf("%d %d died\n", p_get_timestamp(data -> start_time_ms), i);
 		return (pthread_mutex_unlock(&data -> print), 1);
 	}
@@ -72,15 +72,15 @@ int	p_hit_eat_limit(t_data *data)
 
 	i = 0;
 	full_philos = 0;
-	pthread_mutex_lock(&data -> data);
 	while (i < data -> num_philos)
 	{
+		// pthread_mutex_lock(&data -> philos[i] -> lock);
 		if (data -> philos[i] -> times_eaten >= data -> eat_limit)
 			full_philos++;
+		// pthread_mutex_unlock(&data -> philos[i] -> lock);
 		i++;
 	}
 	if (full_philos == data -> num_philos)
-		return (pthread_mutex_unlock(&data -> data), 1);
-	pthread_mutex_unlock(&data -> data);
+		return (1);
 	return (0);
 }

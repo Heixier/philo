@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/17 19:34:07 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/19 20:51:06 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/22 21:53:06 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ int	p_check_if_stopped(t_data *data)
 {
 	int	state;
 
-	pthread_mutex_lock(&data -> data);
+	// pthread_mutex_lock(&data -> data);
 	state = data -> stop_flag;
-	pthread_mutex_unlock(&data -> data);
+	// pthread_mutex_unlock(&data -> data);
 	return (state);
 }

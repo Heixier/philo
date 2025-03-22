@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 17:04:41 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/20 21:23:36 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/22 19:33:05 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,13 @@ typedef struct s_data
 
 typedef struct s_philo
 {
-	uintptr_t	last_eat_ms;
-	int			id;
-	int			times_eaten;
-	int			death_flag;
-	int			offset_ms;
-	t_data		*data;
+	pthread_mutex_t	lock;
+	uintptr_t		last_eat_ms;
+	int				id;
+	int				times_eaten;
+	int				death_flag;
+	int				offset_ms;
+	t_data			*data;
 }				t_philo;
 
 // Init
@@ -89,8 +90,10 @@ int			p_validate(int argc, char **argv);
 // Cleanup
 void		p_cleanup(t_data *data);
 void		p_destroy_mutexes(t_data *data);
-void		p_destroy_partial_forks(t_data *data, int forks_created_so_far);
+void		p_destroy_partial_forks(t_data *data, int forks_so_far);
+void		p_destroy_partial_locks(t_philo *philo, int locks_so_far);
 void		p_free_philosophers(t_data *data);
+
 
 // Control
 void		p_stop_program(t_data *data);

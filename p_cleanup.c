@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 18:43:25 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/19 20:11:32 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/22 21:37:17 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,26 @@ void	p_free_philosophers(t_data *data)
 }
 
 // Destroy up to forks_created_so_far; latest fork failed to create
-void	p_destroy_partial_forks(t_data *data, int forks_created_so_far)
+void	p_destroy_partial_forks(t_data *data, int forks_so_far)
 {
 	int	i;
 
 	i = 0;
-	while (i < forks_created_so_far)
+	while (i < forks_so_far)
 	{
 		pthread_mutex_destroy(&data -> forks[i]);
+		i++;
+	}
+}
+
+void	p_destroy_partial_locks(t_philo *philo, int locks_so_far)
+{
+	int	i;
+
+	i = 0;
+	while (i < locks_so_far)
+	{
+		pthread_mutex_destroy(&philo -> lock);
 		i++;
 	}
 }
@@ -48,8 +60,8 @@ void	p_destroy_mutexes(t_data *data)
 		pthread_mutex_destroy(&data -> forks[i]);
 		i++;
 	}
-	pthread_mutex_destroy(&data -> data);
-	pthread_mutex_destroy(&data -> print);
+	// pthread_mutex_destroy(&data -> data);
+	// pthread_mutex_destroy(&data -> print);
 }
 
 // Final cleanup assuming everything was successfully initialised
