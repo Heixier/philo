@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 17:04:41 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/27 17:00:42 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/28 03:18:36 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ typedef struct s_data
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	death_mutex;
 	pthread_mutex_t	print_mutex;
-	pthread_mutex_t	eat_mutex;
+	pthread_mutex_t	start_mutex;
 	t_philo			**philos;
 	uintptr_t		start_time_ms;
 	int				num_philos;
@@ -45,7 +45,7 @@ typedef struct s_data
 
 typedef struct s_philo
 {
-	pthread_mutex_t	lock;
+	pthread_mutex_t	eat_mutex;
 	uintptr_t		last_eat_ms;
 	int				id;
 	int				times_eaten;
@@ -56,6 +56,7 @@ typedef struct s_philo
 t_data		*p_init_philo_data(int argc, char **argv);
 t_data		*p_init_philosophers(t_data *data);
 t_data		*p_initialise_mutexes(t_data *data);
+int			p_init_base_mutexes(t_data *data);
 
 // Threads
 
@@ -70,7 +71,8 @@ size_t		ft_strlen(const char *s);
 
 // Print
 int			p_announce(t_philo *philo, char *msg);
-
+void		p_error_announce(t_data *data, char *err);
+int			p_sudo_announce(t_philo *philo, char *msg);
 
 void		p_print_debug(t_data *data);
 void		p_print_debug_individual(t_philo *philo);
@@ -102,8 +104,18 @@ void	*p_philo_thread(void *philo_struct);
 int		p_join_threads(pthread_t *thread_ids, int count);
 
 // Monitoring
+void	*p_monitoring_thread(void *data_struct);
+int		p_search_for_starved(t_data *data);
+int		p_check_eat_limit(t_data *data);
 
-// Actions
-
+// Philosophers
+void	*p_philo_thread(void *philo_struct);
+void	p_take_forks(t_philo *philo);
+void	p_fork_grab_alt_cases(t_philo *philo);
+void	p_swap_fork_for_first_philo(t_philo *philo);
+void	p_eat(t_philo *philo);
+void	p_unlock_forks(t_philo *philo);
+void	p_sleep(t_philo *philo);
+void	p_think(t_philo *philo);
 
 #endif

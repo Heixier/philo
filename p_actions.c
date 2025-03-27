@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:26:49 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/27 17:01:01 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/28 03:20:20 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	*p_philo_thread(void *philo_struct)
 		p_sleep(philo);
 		p_think(philo);
 	}
+	return (NULL);
 }
 
 void	p_take_forks(t_philo *philo)
@@ -46,7 +47,7 @@ void	p_fork_grab_alt_cases(t_philo *philo)
 		p_announce(philo, "has taken a fork");
 		p_tick_sleep(philo -> data -> time_to_die_ms);
 		pthread_mutex_unlock(&philo -> data -> forks[philo -> id]);
-		p_announce(philo, "has died");
+		p_announce(philo, "died");
 		pthread_mutex_lock(&philo -> data -> death_mutex);
 		philo -> data -> death_flag = 1;
 		pthread_mutex_unlock(&philo -> data -> death_mutex);
@@ -60,17 +61,24 @@ void	p_swap_fork_for_first_philo(t_philo *philo)
 {
 	pthread_mutex_lock(&philo -> data -> forks[(philo -> id + 1) % philo -> data -> num_philos]);
 	p_announce(philo, "has taken a fork");
+	// pthread_mutex_lock(&philo -> data -> print_mutex);
+	// printf("%d has taken fork %d\n", philo -> id, (philo -> id + 1) % philo -> data -> num_philos);
+	// pthread_mutex_unlock(&philo -> data -> print_mutex);
 	pthread_mutex_lock(&philo -> data -> forks[philo -> id]);
 	p_announce(philo, "has taken a fork");
+	// pthread_mutex_lock(&philo -> data -> print_mutex);
+	// printf("%d has taken fork %d\n", philo -> id, (philo -> id));
+	// pthread_mutex_unlock(&philo -> data -> print_mutex);
 }
 
 void	p_eat(t_philo *philo)
 {
 	p_take_forks(philo);
 	p_announce(philo, "is eating");
-	pthread_mutex_lock(&philo -> data -> eat_mutex);
+	pthread_mutex_lock(&philo -> eat_mutex);
 	philo -> last_eat_ms = p_get_time_ms();
-	pthread_mutex_unlock(&philo -> data -> eat_mutex);
+	philo -> times_eaten++;
+	pthread_mutex_unlock(&philo -> eat_mutex);
 	p_tick_sleep(philo -> data -> time_to_eat_ms);
 	p_unlock_forks(philo);
 }
@@ -98,6 +106,6 @@ void	p_sleep(t_philo *philo)
 // Think for a moment before continuing will this cause drift?
 void	p_think(t_philo *philo)
 {
-	p_annouce(philo, "is thinking");
+	p_announce(philo, "is thinking");
 	p_tick_sleep(10);
 }
