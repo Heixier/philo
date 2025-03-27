@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 18:44:08 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/22 21:37:03 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/24 17:36:32 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ t_data	*p_init_philo_data(int argc, char **argv)
 	return (data);
 }
 
-// Initialises each philosopher and offsets the odd ones so they start later
+// Initialises each philosopher and 	offsets the odd ones so they start later
 t_data	*p_init_philosophers(t_data *data)
 {
 	int	i;
@@ -74,13 +74,13 @@ t_data	*p_initialise_mutexes(t_data *data)
 	data -> forks = ft_calloc(sizeof(pthread_mutex_t), data -> num_philos);
 	if (!data -> forks)
 		return (NULL);
-	// if (pthread_mutex_init(&data -> data, NULL) != 0)
-	// 	return (p_error_announce(data, "fatal error: cgoh\n"), NULL);
-	// if (pthread_mutex_init(&data -> print, NULL) != 0)
-	// {
-	// 	pthread_mutex_destroy(&data -> data);
-	// 	return (p_error_announce(data, "fatal error: cgoh\n"), NULL);
-	// }
+	if (pthread_mutex_init(&data -> data, NULL) != 0)
+		return (p_error_announce(data, "fatal error: cgoh\n"), NULL);
+	if (pthread_mutex_init(&data -> print, NULL) != 0)
+	{
+		pthread_mutex_destroy(&data -> data);
+		return (p_error_announce(data, "fatal error: cgoh\n"), NULL);
+	}
 	forks = 0;
 	while (forks < data -> num_philos)
 	{
@@ -88,8 +88,8 @@ t_data	*p_initialise_mutexes(t_data *data)
 		if (err != 0)
 		{
 			p_destroy_partial_forks(data, forks);
-			// pthread_mutex_destroy(&data -> data);
-			// pthread_mutex_destroy(&data -> print);
+			pthread_mutex_destroy(&data -> data);
+			pthread_mutex_destroy(&data -> print);
 			return (write(2, "fatal error: cgoh\n", 19), free(data->forks), NULL);
 		}
 		forks++;

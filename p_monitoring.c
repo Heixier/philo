@@ -6,81 +6,53 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 17:06:57 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/22 21:35:49 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/27 17:45:12 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-// Will lock data and print in case any dies, returns 1 if dead
-int	p_report_if_any_are_dead(t_data *data)
-{
-	int	i;
-	int	dead;
-	uintptr_t	elapsed;
-	
-	i = 0;
-	dead = 0;
-	while (i < data -> num_philos)
-	{
-		// pthread_mutex_lock(&data -> philos[i] -> lock);
-		elapsed = p_get_time_ms() - data -> philos[i] -> last_eat_ms;
-		// pthread_mutex_unlock(&data -> philos[i] -> lock);
-		// if ((p_get_time_ms() - data -> philos[i] -> last_eat_ms > \
-		// (uintptr_t)(data -> time_to_die_ms)))
-		if (elapsed > (uintptr_t)(data -> time_to_die_ms))
-		{
-			// pthread_mutex_lock(&data -> data);
-			data -> stop_flag = 1;
-			// pthread_mutex_unlock(&data -> data);
-			dead = 1;
-			break ;
-		}
-		i++;
-	}
-
-	if (dead)
-	{
-		pthread_mutex_lock(&data -> print);
-		printf("philo %d died at %ld due to %ld elapsed\n", i, p_get_time_ms(), elapsed);
-		printf("%d %d died\n", p_get_timestamp(data -> start_time_ms), i);
-		return (pthread_mutex_unlock(&data -> print), 1);
-	}
-	return (0);
-}
-
 void	*p_monitoring_thread(void *data_struct)
 {
+	int		i;
 	t_data	*data;
 
-	data = (t_data *)data_struct;
-	p_tick_sleep(data -> time_to_die_ms);
-	while (1)
-	{
-		if (p_report_if_any_are_dead(data))
-			return (NULL);
-		if (data -> eat_limit_flag && p_hit_eat_limit(data))
-			return (p_stop_program(data), NULL);
-	}
-	return (NULL);	
-}
-
-int	p_hit_eat_limit(t_data *data)
-{
-	int	i;
-	int	full_philos;
+	data = (t_data *)data;
 
 	i = 0;
-	full_philos = 0;
+	while (!p_search_for_dead(data) || !p_check_eat_limit(data))
+		;
+	return (NULL);
+}
+
+// Returns 1 if dead philosopher is found
+int	p_search_for_dead(t_data *data)
+{
+	int	i;
+
+	i = 0;
 	while (i < data -> num_philos)
 	{
-		// pthread_mutex_lock(&data -> philos[i] -> lock);
-		if (data -> philos[i] -> times_eaten >= data -> eat_limit)
-			full_philos++;
-		// pthread_mutex_unlock(&data -> philos[i] -> lock);
-		i++;
+		if (p_check_if_dead(data -> philos[i]))
+		{
+			p_announce(data -> philos[i], "has died");
+			pthread_mutex_lock(&data -> death_mutex);
+			data -> death_flag = 1;
+			pthread_mutex_unlock(&data -> death_mutex);
+			return (1);
+		}
 	}
-	if (full_philos == data -> num_philos)
-		return (1);
-	return (0);
+}
+
+int	p_check_eat_limit(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	if (!data -> eat_limit_flag)
+		return (0);
+	while (i < data -> num_philos)
+	{
+		
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:36:04 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/22 21:30:35 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/27 14:05:49 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,6 @@ int	p_start_philosopher_threads(t_data *data)
 	while (i < data -> num_philos)
 	{
 		pthread_create(&thread_ids[i], NULL, p_philo_thread, data -> philos[i]);
-		if (i % 2 == 0)
-			p_tick_sleep(1 + (data -> num_philos / 10)); // delay start
 		i++;
 	}
 	pthread_create(&thread_ids[data -> num_philos], NULL, p_monitoring_thread, data);
