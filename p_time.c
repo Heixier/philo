@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 17:18:02 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/28 03:21:02 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/29 18:56:36 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	p_tick_sleep(int wait_time_ms)
 	while (elapsed < wait_time_ms)
 	{
 		elapsed = p_get_time_ms() - start;
-		usleep(200);
+		usleep(10);
 	}
 }
 

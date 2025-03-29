@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:36:04 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/28 03:15:36 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/29 18:49:32 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,13 @@ int	p_start_philosopher_threads(t_data *data)
 	pthread_create(&thread_ids[data -> num_philos], NULL, p_monitoring_thread, data);
 	while (i < data -> num_philos)
 	{
-		data -> philos[i] -> last_eat_ms = p_get_time_ms();
 		pthread_create(&thread_ids[i], NULL, p_philo_thread, data -> philos[i]);
+		i++;
+	}
+	i = 0;
+	while (i < data -> num_philos)
+	{
+		data -> philos[i] -> last_eat_ms = p_get_time_ms();
 		i++;
 	}
 	pthread_mutex_unlock(&data -> start_mutex);

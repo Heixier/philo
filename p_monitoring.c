@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 17:06:57 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/28 03:26:16 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/29 20:09:59 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	*p_monitoring_thread(void *data_struct)
 	pthread_mutex_lock(&data -> start_mutex);
 	pthread_mutex_unlock(&data -> start_mutex);
 	while (!p_search_for_starved(data) && !p_check_eat_limit(data))
-		usleep(420);
+		usleep(1000);
 	return (NULL);
 }
 
@@ -35,17 +35,16 @@ int	p_search_for_starved(t_data *data)
 	{
 		pthread_mutex_lock(&data -> philos[i] -> eat_mutex);
 		time_elapsed = p_get_time_ms() - data -> philos[i] -> last_eat_ms;
+		pthread_mutex_unlock(&data -> philos[i] -> eat_mutex);
 		if (time_elapsed > (uintptr_t)data -> time_to_die_ms)
 		{
 			pthread_mutex_lock(&data -> death_mutex);
 			data -> death_flag = 1;
-			p_print_debug_individual(data -> philos[i]);
+			// p_print_debug_individual(data -> philos[i]);
 			pthread_mutex_unlock(&data -> death_mutex);
 			p_sudo_announce(data -> philos[i], "died");
-			pthread_mutex_unlock(&data -> death_mutex);
 			return (1);
 		}
-		pthread_mutex_unlock(&data -> philos[i] -> eat_mutex);
 		i++;
 	}
 	return (0);

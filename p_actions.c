@@ -6,69 +6,71 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:26:49 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/28 03:20:20 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/29 20:04:34 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+static void	p_take_even(t_philo *philo);
+static void	p_take_odd(t_philo *philo);
 
 void	*p_philo_thread(void *philo_struct)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)philo_struct;
-	while (!p_check_if_dead(philo))
+	pthread_mutex_lock(&philo -> data -> start_mutex);
+	pthread_mutex_unlock(&philo -> data -> start_mutex);
+	if (philo -> data -> num_philos == 1)
 	{
-		p_eat(philo);
-		p_sleep(philo);
-		p_think(philo);
+		p_announce(philo, "has taken a fork");
+		pthread_mutex_lock(&philo -> data -> death_mutex);
+		philo -> data -> death_flag = 1;
+		pthread_mutex_unlock(&philo -> data -> death_mutex);
+		p_tick_sleep(philo -> data -> time_to_die_ms);
+	}
+	else
+	{
+		while (1)
+		{
+			if (p_check_if_dead(philo))
+				break;
+			p_eat(philo);
+			if (p_check_if_dead(philo))
+				break;
+			p_sleep(philo);
+			if (p_check_if_dead(philo))
+				break;
+			p_think(philo);
+		}
 	}
 	return (NULL);
 }
 
-void	p_take_forks(t_philo *philo)
-{
-	if (philo -> data -> num_philos == 1 || philo -> id == 0)
-		p_fork_grab_alt_cases(philo);
-	else
-	{
-		pthread_mutex_lock(&philo -> data -> forks[philo -> id]);
-		p_announce(philo, "has taken a fork");
-		pthread_mutex_lock(&philo -> data -> forks[(philo -> id + 1) % philo -> data -> num_philos]);
-		p_announce(philo, "has taken a fork");
-	}
-}
-
-void	p_fork_grab_alt_cases(t_philo *philo)
-{
-	if (philo -> data -> num_philos == 1)
-	{
-		pthread_mutex_lock(&philo -> data -> forks[philo -> id]);
-		p_announce(philo, "has taken a fork");
-		p_tick_sleep(philo -> data -> time_to_die_ms);
-		pthread_mutex_unlock(&philo -> data -> forks[philo -> id]);
-		p_announce(philo, "died");
-		pthread_mutex_lock(&philo -> data -> death_mutex);
-		philo -> data -> death_flag = 1;
-		pthread_mutex_unlock(&philo -> data -> death_mutex);
-	}
-	else
-		p_swap_fork_for_first_philo(philo);
-}
-
-// If philo id == 0, swap its forks
-void	p_swap_fork_for_first_philo(t_philo *philo)
+static void	p_take_even(t_philo *philo)
 {
 	pthread_mutex_lock(&philo -> data -> forks[(philo -> id + 1) % philo -> data -> num_philos]);
 	p_announce(philo, "has taken a fork");
-	// pthread_mutex_lock(&philo -> data -> print_mutex);
-	// printf("%d has taken fork %d\n", philo -> id, (philo -> id + 1) % philo -> data -> num_philos);
-	// pthread_mutex_unlock(&philo -> data -> print_mutex);
 	pthread_mutex_lock(&philo -> data -> forks[philo -> id]);
 	p_announce(philo, "has taken a fork");
-	// pthread_mutex_lock(&philo -> data -> print_mutex);
-	// printf("%d has taken fork %d\n", philo -> id, (philo -> id));
-	// pthread_mutex_unlock(&philo -> data -> print_mutex);
+}
+
+static void	p_take_odd(t_philo *philo)
+{
+	usleep(100);
+	pthread_mutex_lock(&philo -> data -> forks[philo -> id]);
+	p_announce(philo, "has taken a fork");
+	pthread_mutex_lock(&philo -> data -> forks[(philo -> id + 1) % philo -> data -> num_philos]);
+	p_announce(philo, "has taken a fork");
+}
+
+void	p_take_forks(t_philo *philo)
+{
+	if (philo -> id % 2)
+		p_take_odd(philo);
+	else
+		p_take_even(philo);
 }
 
 void	p_eat(t_philo *philo)
@@ -85,10 +87,10 @@ void	p_eat(t_philo *philo)
 
 void	p_unlock_forks(t_philo *philo)
 {
-	if (philo -> id == 0)
+	if (philo -> id % 2)
 	{
-		pthread_mutex_unlock(&philo -> data -> forks[(philo -> id + 1) % philo -> data -> num_philos]);
 		pthread_mutex_unlock(&philo -> data -> forks[philo -> id]);
+		pthread_mutex_unlock(&philo -> data -> forks[(philo -> id + 1) % philo -> data -> num_philos]);
 	}
 	else
 	{
@@ -107,5 +109,5 @@ void	p_sleep(t_philo *philo)
 void	p_think(t_philo *philo)
 {
 	p_announce(philo, "is thinking");
-	p_tick_sleep(10);
+	// usleep(100);
 }
