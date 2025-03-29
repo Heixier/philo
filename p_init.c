@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 18:44:08 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/22 21:37:03 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/28 03:16:07 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ t_data	*p_init_philo_data(int argc, char **argv)
 		return (NULL);
 	data = ft_calloc(sizeof(t_data), 1);
 	if (!data)
-		return (p_error_announce(data, "fatal error: cgoh\n"), NULL);
+		return (p_error_announce(data, "malloc error\n"), NULL);
 	data -> num_philos = ft_atoi(argv[1]);
 	data -> time_to_die_ms = ft_atoi(argv[2]);
 	data -> time_to_eat_ms = ft_atoi(argv[3]);
@@ -38,7 +38,7 @@ t_data	*p_init_philo_data(int argc, char **argv)
 	return (data);
 }
 
-// Initialises each philosopher and offsets the odd ones so they start later
+// Initialises each philosopher and 	offsets the odd ones so they start later
 t_data	*p_init_philosophers(t_data *data)
 {
 	int	i;
@@ -51,11 +51,11 @@ t_data	*p_init_philosophers(t_data *data)
 	{
 		data -> philos[i] = ft_calloc(sizeof(t_philo), 1);
 		if (!data -> philos[i])
-			return (p_error_announce(data, "fatal error: cgoh\n"), \
+			return (p_error_announce(data, "malloc error\n"), \
 			p_free_philosophers(data), NULL);
 		data -> philos[i] -> id = i;
 		data -> philos[i] -> data = data;
-		if (pthread_mutex_init(&data -> philos[i] -> lock, NULL))
+		if (pthread_mutex_init(&data -> philos[i] -> eat_mutex, NULL))
 		{
 			p_destroy_partial_locks(data -> philos[i], i);
 			p_free_philosophers(data);
@@ -66,6 +66,24 @@ t_data	*p_init_philosophers(t_data *data)
 	return (data);
 }
 
+int	p_init_base_mutexes(t_data *data)
+{
+	if (pthread_mutex_init(&data -> print_mutex, NULL) != 0)
+		return (FAILURE);
+	if (pthread_mutex_init(&data -> death_mutex, NULL) != 0)
+	{
+		pthread_mutex_destroy(&data -> print_mutex);
+		return (FAILURE);
+	}
+	if (pthread_mutex_init(&data -> start_mutex, NULL) != 0)
+	{
+		pthread_mutex_destroy(&data -> print_mutex);
+		pthread_mutex_destroy(&data -> death_mutex);
+		return (FAILURE);
+	}
+	return (SUCCESS);
+}
+
 t_data	*p_initialise_mutexes(t_data *data)
 {
 	int	forks;
@@ -74,13 +92,8 @@ t_data	*p_initialise_mutexes(t_data *data)
 	data -> forks = ft_calloc(sizeof(pthread_mutex_t), data -> num_philos);
 	if (!data -> forks)
 		return (NULL);
-	// if (pthread_mutex_init(&data -> data, NULL) != 0)
-	// 	return (p_error_announce(data, "fatal error: cgoh\n"), NULL);
-	// if (pthread_mutex_init(&data -> print, NULL) != 0)
-	// {
-	// 	pthread_mutex_destroy(&data -> data);
-	// 	return (p_error_announce(data, "fatal error: cgoh\n"), NULL);
-	// }
+	if (!p_init_base_mutexes(data))
+		return (p_error_announce(data, "malloc error\n"), NULL);
 	forks = 0;
 	while (forks < data -> num_philos)
 	{
@@ -88,9 +101,10 @@ t_data	*p_initialise_mutexes(t_data *data)
 		if (err != 0)
 		{
 			p_destroy_partial_forks(data, forks);
-			// pthread_mutex_destroy(&data -> data);
-			// pthread_mutex_destroy(&data -> print);
-			return (write(2, "fatal error: cgoh\n", 19), free(data->forks), NULL);
+			pthread_mutex_destroy(&data -> print_mutex);
+			pthread_mutex_destroy(&data -> death_mutex);
+			pthread_mutex_destroy(&data -> start_mutex);
+			return (p_error_announce(data, "malloc error\n"), free(data->forks), NULL);
 		}
 		forks++;
 	}

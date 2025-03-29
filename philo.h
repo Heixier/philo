@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 17:04:41 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/22 19:33:05 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/28 03:18:36 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,27 +29,26 @@ typedef struct s_philo	t_philo;
 typedef struct s_data
 {
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	data;
-	pthread_mutex_t	print;
+	pthread_mutex_t	death_mutex;
+	pthread_mutex_t	print_mutex;
+	pthread_mutex_t	start_mutex;
 	t_philo			**philos;
 	uintptr_t		start_time_ms;
-	int				stop_flag;
 	int				num_philos;
 	int				time_to_die_ms;
 	int				time_to_eat_ms;
 	int				time_to_sleep_ms;
+	int				death_flag;
 	int				eat_limit_flag;
 	int				eat_limit;
 }				t_data;
 
 typedef struct s_philo
 {
-	pthread_mutex_t	lock;
+	pthread_mutex_t	eat_mutex;
 	uintptr_t		last_eat_ms;
 	int				id;
 	int				times_eaten;
-	int				death_flag;
-	int				offset_ms;
 	t_data			*data;
 }				t_philo;
 
@@ -57,6 +56,7 @@ typedef struct s_philo
 t_data		*p_init_philo_data(int argc, char **argv);
 t_data		*p_init_philosophers(t_data *data);
 t_data		*p_initialise_mutexes(t_data *data);
+int			p_init_base_mutexes(t_data *data);
 
 // Threads
 
@@ -70,10 +70,9 @@ int			ft_atoi(const char *nptr);
 size_t		ft_strlen(const char *s);
 
 // Print
-int			p_announce(t_data *data, int id, char *msg);
-void		p_sudo_announce(t_data *data, int id, char *msg);
+int			p_announce(t_philo *philo, char *msg);
 void		p_error_announce(t_data *data, char *err);
-
+int			p_sudo_announce(t_philo *philo, char *msg);
 
 void		p_print_debug(t_data *data);
 void		p_print_debug_individual(t_philo *philo);
@@ -96,9 +95,7 @@ void		p_free_philosophers(t_data *data);
 
 
 // Control
-void		p_stop_program(t_data *data);
-int			p_check_if_stopped(t_data *data);
-int			p_hit_eat_limit(t_data *data);
+int			p_check_if_dead(t_philo *philo);
 
 
 // Threads
@@ -106,15 +103,19 @@ int		p_start_philosopher_threads(t_data *data);
 void	*p_philo_thread(void *philo_struct);
 int		p_join_threads(pthread_t *thread_ids, int count);
 
-int		p_report_if_any_are_dead(t_data *data);
+// Monitoring
 void	*p_monitoring_thread(void *data_struct);
+int		p_search_for_starved(t_data *data);
+int		p_check_eat_limit(t_data *data);
 
-// Actions
-int		p_even_philo_actions(t_philo *philo);
-int		p_odd_philo_actions(t_philo *philo);
-int		p_grab_forks(t_philo *philo, int first_id, int second_id);
-void	p_put_down_forks(t_data *data, int first_id, int second_id);
-int		p_eat(t_philo *philo);
-int		p_sleep(t_philo *philo);
+// Philosophers
+void	*p_philo_thread(void *philo_struct);
+void	p_take_forks(t_philo *philo);
+void	p_fork_grab_alt_cases(t_philo *philo);
+void	p_swap_fork_for_first_philo(t_philo *philo);
+void	p_eat(t_philo *philo);
+void	p_unlock_forks(t_philo *philo);
+void	p_sleep(t_philo *philo);
+void	p_think(t_philo *philo);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 18:43:25 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/22 21:37:17 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/28 03:13:57 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	p_destroy_partial_locks(t_philo *philo, int locks_so_far)
 	i = 0;
 	while (i < locks_so_far)
 	{
-		pthread_mutex_destroy(&philo -> lock);
+		pthread_mutex_destroy(&philo -> eat_mutex);
 		i++;
 	}
 }
@@ -60,16 +60,14 @@ void	p_destroy_mutexes(t_data *data)
 		pthread_mutex_destroy(&data -> forks[i]);
 		i++;
 	}
-	// pthread_mutex_destroy(&data -> data);
-	// pthread_mutex_destroy(&data -> print);
+	pthread_mutex_destroy(&data -> print_mutex);
+	pthread_mutex_destroy(&data -> death_mutex);
+	pthread_mutex_destroy(&data -> start_mutex);
 }
 
 // Final cleanup assuming everything was successfully initialised
 void	p_cleanup(t_data *data)
 {
-	int	i;
-
-	i = 0;
 	p_free_philosophers(data);
 	free(data -> philos);
 	p_destroy_mutexes(data);

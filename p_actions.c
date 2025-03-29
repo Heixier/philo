@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:26:49 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/22 21:46:00 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/28 03:20:20 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,120 +15,97 @@
 void	*p_philo_thread(void *philo_struct)
 {
 	t_philo	*philo;
-	int		id;
 
 	philo = (t_philo *)philo_struct;
-	id = philo -> id;
-	// pthread_mutex_lock(&philo -> lock);
-	philo -> last_eat_ms = p_get_time_ms();
-	// pthread_mutex_unlock(&philo -> lock);
-	while (1)
+	while (!p_check_if_dead(philo))
 	{
-		if (id % 2 == 0)
-		{
-			if (!p_even_philo_actions(philo))
-				return (NULL);
-		}
-		else
-		{
-			if (!p_odd_philo_actions(philo))
-				return (NULL);
-		}
-		// pthread_mutex_lock(&philo -> data -> mutex);
-		// p_print_debug_individual(philo);
-		// pthread_mutex_unlock(&philo -> data -> mutex);
+		p_eat(philo);
+		p_sleep(philo);
+		p_think(philo);
 	}
 	return (NULL);
 }
 
-// Grab right then left
-int	p_even_philo_actions(t_philo *philo)
+void	p_take_forks(t_philo *philo)
 {
-	if (p_check_if_stopped(philo -> data))
-		return (0);
-	if (!p_grab_forks(philo, \
-		(philo -> id + 1) % philo -> data -> num_philos, philo -> id))
-		return (0);
-	if (!p_eat(philo))
-		return (0);
-	p_put_down_forks(philo -> data, \
-		(philo -> id + 1) % philo -> data -> num_philos, philo -> id);
-	if (p_check_if_stopped(philo -> data))
-		return (0);
-	if (!p_sleep(philo))
-		return (0);
-	if (p_check_if_stopped(philo -> data))
-		return (0);
-	p_announce(philo -> data, philo -> id, "is thinking");
-	return (1);
-}
-
-// Grab left then right
-int	p_odd_philo_actions(t_philo *philo)
-{
-	if (p_check_if_stopped(philo -> data))
-		return (0);
-	if (!p_grab_forks(philo, philo -> id, \
-		(philo -> id + 1) % philo -> data -> num_philos))
-		return (0);
-	if (!p_eat(philo))
-		return (p_put_down_forks(philo -> data, philo -> id, \
-			(philo -> id + 1) % philo -> data -> num_philos), 0);
-	p_put_down_forks(philo -> data, philo -> id, \
-		(philo -> id + 1) % philo -> data -> num_philos);
-	if (!p_sleep(philo))
-		return (0);
-	if (p_check_if_stopped(philo -> data))
-		return (0);
-	p_announce(philo -> data, philo -> id, "is thinking");
-	return (1);
-}
-
-// Left fork is defined as id, right fork is id + 1
-int	p_grab_forks(t_philo *philo, int first_id, int second_id)
-{
-	pthread_mutex_lock(&philo -> data -> forks[first_id]);
-	p_announce(philo -> data, philo -> id, "has taken a fork");
-	if (p_check_if_stopped(philo -> data))
+	if (philo -> data -> num_philos == 1 || philo -> id == 0)
+		p_fork_grab_alt_cases(philo);
+	else
 	{
-		pthread_mutex_unlock(&philo -> data -> forks[first_id]);
-		return (FAILURE);
+		pthread_mutex_lock(&philo -> data -> forks[philo -> id]);
+		p_announce(philo, "has taken a fork");
+		pthread_mutex_lock(&philo -> data -> forks[(philo -> id + 1) % philo -> data -> num_philos]);
+		p_announce(philo, "has taken a fork");
 	}
-	pthread_mutex_lock(&philo -> data -> forks[second_id]);
-	if (p_check_if_stopped(philo -> data))
+}
+
+void	p_fork_grab_alt_cases(t_philo *philo)
+{
+	if (philo -> data -> num_philos == 1)
 	{
-		pthread_mutex_unlock(&philo -> data -> forks[first_id]);
-		pthread_mutex_unlock(&philo -> data -> forks[second_id]);
-		return (FAILURE);
+		pthread_mutex_lock(&philo -> data -> forks[philo -> id]);
+		p_announce(philo, "has taken a fork");
+		p_tick_sleep(philo -> data -> time_to_die_ms);
+		pthread_mutex_unlock(&philo -> data -> forks[philo -> id]);
+		p_announce(philo, "died");
+		pthread_mutex_lock(&philo -> data -> death_mutex);
+		philo -> data -> death_flag = 1;
+		pthread_mutex_unlock(&philo -> data -> death_mutex);
 	}
-	p_announce(philo -> data, philo -> id, "has taken a fork");
-	return (SUCCESS);
+	else
+		p_swap_fork_for_first_philo(philo);
 }
 
-void	p_put_down_forks(t_data *data, int first_id, int second_id)
+// If philo id == 0, swap its forks
+void	p_swap_fork_for_first_philo(t_philo *philo)
 {
-	pthread_mutex_unlock(&data -> forks[first_id]);
-	pthread_mutex_unlock(&data -> forks[second_id]);
+	pthread_mutex_lock(&philo -> data -> forks[(philo -> id + 1) % philo -> data -> num_philos]);
+	p_announce(philo, "has taken a fork");
+	// pthread_mutex_lock(&philo -> data -> print_mutex);
+	// printf("%d has taken fork %d\n", philo -> id, (philo -> id + 1) % philo -> data -> num_philos);
+	// pthread_mutex_unlock(&philo -> data -> print_mutex);
+	pthread_mutex_lock(&philo -> data -> forks[philo -> id]);
+	p_announce(philo, "has taken a fork");
+	// pthread_mutex_lock(&philo -> data -> print_mutex);
+	// printf("%d has taken fork %d\n", philo -> id, (philo -> id));
+	// pthread_mutex_unlock(&philo -> data -> print_mutex);
 }
 
-int	p_eat(t_philo *philo)
+void	p_eat(t_philo *philo)
 {
-	if (p_check_if_stopped(philo -> data))
-		return (0);
-	// pthread_mutex_lock(&philo -> lock);
+	p_take_forks(philo);
+	p_announce(philo, "is eating");
+	pthread_mutex_lock(&philo -> eat_mutex);
 	philo -> last_eat_ms = p_get_time_ms();
 	philo -> times_eaten++;
-	// pthread_mutex_unlock(&philo -> lock);
-	p_announce(philo -> data, philo -> id, "is eating");
+	pthread_mutex_unlock(&philo -> eat_mutex);
 	p_tick_sleep(philo -> data -> time_to_eat_ms);
-	return (1);
+	p_unlock_forks(philo);
 }
 
-int	p_sleep(t_philo *philo)
+void	p_unlock_forks(t_philo *philo)
 {
-	if (p_check_if_stopped(philo -> data))
-		return (0);
-	p_announce(philo -> data, philo -> id, "is sleeping");
+	if (philo -> id == 0)
+	{
+		pthread_mutex_unlock(&philo -> data -> forks[(philo -> id + 1) % philo -> data -> num_philos]);
+		pthread_mutex_unlock(&philo -> data -> forks[philo -> id]);
+	}
+	else
+	{
+		pthread_mutex_unlock(&philo -> data -> forks[philo -> id]);
+		pthread_mutex_unlock(&philo -> data -> forks[(philo -> id + 1) % philo -> data -> num_philos]);
+	}
+}
+
+void	p_sleep(t_philo *philo)
+{
+	p_announce(philo, "is sleeping");
 	p_tick_sleep(philo -> data -> time_to_sleep_ms);
-	return (1);
+}
+
+// Think for a moment before continuing will this cause drift?
+void	p_think(t_philo *philo)
+{
+	p_announce(philo, "is thinking");
+	p_tick_sleep(10);
 }
