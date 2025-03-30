@@ -6,26 +6,29 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 17:06:57 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/29 20:09:59 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/30 18:20:04 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	*p_monitoring_thread(void *data_struct)
+static int	p_search_for_starved(t_data *data);
+static int	p_check_eat_limit(t_data *data);
+
+void	*p_mon_thread(void *data_struct)
 {
 	t_data	*data;
 
 	data = (t_data *)data_struct;
-	pthread_mutex_lock(&data -> start_mutex);
-	pthread_mutex_unlock(&data -> start_mutex);
+	pthread_mutex_lock(&data->start_mutex);
+	pthread_mutex_unlock(&data->start_mutex);
 	while (!p_search_for_starved(data) && !p_check_eat_limit(data))
 		usleep(1000);
 	return (NULL);
 }
 
 // Returns true if philosopher has starved to death
-int	p_search_for_starved(t_data *data)
+static int	p_search_for_starved(t_data *data)
 {
 	int			i;
 	uintptr_t	time_elapsed;
@@ -33,16 +36,15 @@ int	p_search_for_starved(t_data *data)
 	i = 0;
 	while (i < data -> num_philos)
 	{
-		pthread_mutex_lock(&data -> philos[i] -> eat_mutex);
-		time_elapsed = p_get_time_ms() - data -> philos[i] -> last_eat_ms;
-		pthread_mutex_unlock(&data -> philos[i] -> eat_mutex);
-		if (time_elapsed > (uintptr_t)data -> time_to_die_ms)
+		pthread_mutex_lock(&data->philos[i]->eat_mutex);
+		time_elapsed = p_get_time_ms() - data->philos[i]->last_eat_ms;
+		pthread_mutex_unlock(&data->philos[i]->eat_mutex);
+		if (time_elapsed > (uintptr_t)data->time_to_die_ms)
 		{
-			pthread_mutex_lock(&data -> death_mutex);
+			pthread_mutex_lock(&data->death_mutex);
 			data -> death_flag = 1;
-			// p_print_debug_individual(data -> philos[i]);
-			pthread_mutex_unlock(&data -> death_mutex);
-			p_sudo_announce(data -> philos[i], "died");
+			pthread_mutex_unlock(&data->death_mutex);
+			p_sudo_announce(data->philos[i], "died");
 			return (1);
 		}
 		i++;
@@ -50,7 +52,7 @@ int	p_search_for_starved(t_data *data)
 	return (0);
 }
 
-int	p_check_eat_limit(t_data *data)
+static int	p_check_eat_limit(t_data *data)
 {
 	int	i;
 	int	eaten;
@@ -61,17 +63,17 @@ int	p_check_eat_limit(t_data *data)
 		return (0);
 	while (i < data -> num_philos)
 	{
-		pthread_mutex_lock(&data -> philos[i] -> eat_mutex);
-		if (data -> philos[i] -> times_eaten >= data -> eat_limit)
+		pthread_mutex_lock(&data->philos[i]->eat_mutex);
+		if (data -> philos[i]->times_eaten >= data->eat_limit)
 			eaten++;
-		pthread_mutex_unlock(&data -> philos[i] -> eat_mutex);
+		pthread_mutex_unlock(&data->philos[i]->eat_mutex);
 		i++;
 	}
 	if (eaten == data -> num_philos)
 	{
-		pthread_mutex_lock(&data -> death_mutex);
+		pthread_mutex_lock(&data->death_mutex);
 		data -> death_flag = 1;
-		pthread_mutex_unlock(&data -> death_mutex);
+		pthread_mutex_unlock(&data->death_mutex);
 		return (1);
 	}
 	return (0);

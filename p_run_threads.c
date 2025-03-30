@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:36:04 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/29 18:49:32 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/30 18:18:06 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	p_start_philosopher_threads(t_data *data)
 		return (p_error_announce(data, "malloc error\n"), FAILURE);
 	data -> start_time_ms = p_get_time_ms();
 	pthread_mutex_lock(&data -> start_mutex);
-	pthread_create(&thread_ids[data -> num_philos], NULL, p_monitoring_thread, data);
+	pthread_create(&thread_ids[data->num_philos], NULL, p_mon_thread, data);
 	while (i < data -> num_philos)
 	{
 		pthread_create(&thread_ids[i], NULL, p_philo_thread, data -> philos[i]);
@@ -32,13 +32,12 @@ int	p_start_philosopher_threads(t_data *data)
 	i = 0;
 	while (i < data -> num_philos)
 	{
-		data -> philos[i] -> last_eat_ms = p_get_time_ms();
+		data->philos[i]->last_eat_ms = p_get_time_ms();
 		i++;
 	}
 	pthread_mutex_unlock(&data -> start_mutex);
 	p_join_threads(thread_ids, data -> num_philos);
-	free(thread_ids);
-	return (SUCCESS);
+	return (free(thread_ids), SUCCESS);
 }
 
 int	p_join_threads(pthread_t *thread_ids, int count)

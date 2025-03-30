@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.c                                            :+:      :+:    :+:   */
+/*   p_lib_calc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/05 23:18:17 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/30 18:28:05 by rsiah            ###   ########.fr       */
+/*   Created: 2025/03/30 18:26:42 by rsiah             #+#    #+#             */
+/*   Updated: 2025/03/30 18:27:13 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	main(int argc, char **argv)
+size_t	ft_strlen(const char *s)
 {
-	t_data	*data;
+	int	count;
 
-	data = p_init_philo_data(argc, argv);
-	if (!data)
-		return (1);
-	p_start_philosopher_threads(data);
-	p_cleanup(data);
-	return (0);
+	if (!s)
+		return (0);
+	count = 0;
+	while (s[count])
+		count++;
+	return (count);
 }
