@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 21:52:10 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/30 18:27:11 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/17 19:26:06 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,4 +92,16 @@ int	ft_atoi(const char *nptr)
 		i++;
 	}
 	return (output * sign);
+}
+
+size_t	ft_strlen(const char *s)
+{
+	int	count;
+
+	if (!s)
+		return (0);
+	count = 0;
+	while (s[count])
+		count++;
+	return (count);
 }

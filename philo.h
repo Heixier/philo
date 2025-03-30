@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 17:04:41 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/30 18:30:22 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/29 18:38:05 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,13 +67,15 @@ void		ft_bzero(void *s, size_t n);
 void		*ft_calloc(size_t nmemb, size_t size);
 int			ft_atoi(const char *nptr);
 
-// Lib calc
 size_t		ft_strlen(const char *s);
 
 // Print
 int			p_announce(t_philo *philo, char *msg);
 void		p_error_announce(t_data *data, char *err);
 int			p_sudo_announce(t_philo *philo, char *msg);
+
+void		p_print_debug(t_data *data);
+void		p_print_debug_individual(t_philo *philo);
 
 // Time
 int			p_get_timestamp(uintptr_t start_time);
@@ -91,23 +93,29 @@ void		p_destroy_partial_forks(t_data *data, int forks_so_far);
 void		p_destroy_partial_locks(t_philo *philo, int locks_so_far);
 void		p_free_philosophers(t_data *data);
 
+
 // Control
 int			p_check_if_dead(t_philo *philo);
 
+
 // Threads
-int			p_start_philosopher_threads(t_data *data);
-void		*p_philo_thread(void *philo_struct);
-int			p_join_threads(pthread_t *thread_ids, int count);
+int		p_start_philosopher_threads(t_data *data);
+void	*p_philo_thread(void *philo_struct);
+int		p_join_threads(pthread_t *thread_ids, int count);
 
 // Monitoring
-void		*p_mon_thread(void *data_struct);
+void	*p_monitoring_thread(void *data_struct);
+int		p_search_for_starved(t_data *data);
+int		p_check_eat_limit(t_data *data);
 
 // Philosophers
-void		*p_philo_thread(void *philo_struct);
-void		p_sleep(t_philo *philo);
-void		p_think(t_philo *philo);
-
-// Eat
-void		p_eat(t_philo *philo);
+void	*p_philo_thread(void *philo_struct);
+void	p_take_forks(t_philo *philo);
+void	p_fork_grab_alt_cases(t_philo *philo);
+void	p_swap_fork_for_first_philo(t_philo *philo);
+void	p_eat(t_philo *philo);
+void	p_unlock_forks(t_philo *philo);
+void	p_sleep(t_philo *philo);
+void	p_think(t_philo *philo);
 
 #endif

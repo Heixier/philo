@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 17:13:14 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/30 18:18:51 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/28 03:18:41 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,7 @@ int	p_announce(t_philo *philo, char *msg)
 {
 	pthread_mutex_lock(&philo -> data -> print_mutex);
 	if (!p_check_if_dead(philo))
-		printf("%d %d %s\n", p_get_timestamp(philo -> data -> start_time_ms), \
-		philo -> id, msg);
+		printf("%d %d %s\n", p_get_timestamp(philo -> data -> start_time_ms), philo -> id, msg);
 	pthread_mutex_unlock(&philo -> data -> print_mutex);
 	return (SUCCESS);
 }
@@ -26,8 +25,7 @@ int	p_announce(t_philo *philo, char *msg)
 int	p_sudo_announce(t_philo *philo, char *msg)
 {
 	pthread_mutex_lock(&philo -> data -> print_mutex);
-	printf("%d %d %s\n", p_get_timestamp(philo -> data -> start_time_ms), \
-	philo -> id, msg);
+	printf("%d %d %s\n", p_get_timestamp(philo -> data -> start_time_ms), philo -> id, msg);
 	pthread_mutex_unlock(&philo -> data -> print_mutex);
 	return (SUCCESS);
 }
