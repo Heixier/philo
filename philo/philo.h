@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 17:04:41 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/30 18:30:22 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/31 14:09:34 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # define SUCCESS 1
 # define FAILURE 0
 # define MON_THREADS 1
+# define PHILO_LIMIT 200
 
 typedef struct s_philo	t_philo;
 

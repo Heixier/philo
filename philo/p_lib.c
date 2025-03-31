@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 21:52:10 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/30 18:27:11 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/31 14:07:21 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	ft_aredigits(char *str)
 	int	i;
 
 	i = 0;
-	if (!str)
+	if (!str || !*str)
 		return (0);
 	while (str[i])
 	{
