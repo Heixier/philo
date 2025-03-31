@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 18:43:25 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/28 03:13:57 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/31 16:10:33 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,5 +73,4 @@ void	p_cleanup(t_data *data)
 	p_destroy_mutexes(data);
 	free(data -> forks);
 	free(data);
-	printf("cleanup complete\n");
 }
