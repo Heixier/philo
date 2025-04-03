@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 21:52:10 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/30 18:27:11 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/31 16:16:38 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	*ft_calloc(size_t nmemb, size_t size)
 		return (NULL);
 	output = malloc(n);
 	if (!output)
-		return (write(2, "cgoh error\n", 12), output);
+		return (write(2, "malloc error\n", 14), output);
 	return (ft_bzero(output, n), output);
 }
 
@@ -48,8 +48,10 @@ int	ft_aredigits(char *str)
 	int	i;
 
 	i = 0;
-	if (!str)
+	if (!str || !*str)
 		return (0);
+	if (str[i] == '+')
+		i++;
 	while (str[i])
 	{
 		if (!(str[i] >= '0' && str[i] <= '9'))

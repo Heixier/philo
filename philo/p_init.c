@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 18:44:08 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/30 18:21:15 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/03/31 14:16:13 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ t_data	*p_init_philosophers(t_data *data)
 
 	data->philos = ft_calloc(sizeof(t_philo *), data->num_philos + 1);
 	if (!data->philos)
-		return (NULL);
+		return (p_error_announce(data, "malloc error\n"), NULL);
 	i = 0;
 	while (i < data->num_philos)
 	{
