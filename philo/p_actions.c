@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:26:49 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/30 18:32:59 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/04/04 00:25:57 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,4 +60,6 @@ void	p_sleep(t_philo *philo)
 void	p_think(t_philo *philo)
 {
 	p_announce(philo, "is thinking");
+	p_tick_sleep(philo->data->time_to_eat_ms - \
+		philo->data->time_to_sleep_ms);
 }

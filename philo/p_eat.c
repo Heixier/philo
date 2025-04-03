@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 18:28:33 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/30 18:33:22 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/04/03 23:43:43 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ static void	p_unlock_forks(t_philo *philo);
 
 static void	p_take_even(t_philo *philo)
 {
+	usleep(500);
 	pthread_mutex_lock(&philo->data->forks[(philo->id + 1) % \
 		philo->data->num_philos]);
 	p_announce(philo, "has taken a fork");
@@ -28,7 +29,6 @@ static void	p_take_even(t_philo *philo)
 
 static void	p_take_odd(t_philo *philo)
 {
-	usleep(100);
 	pthread_mutex_lock(&philo->data->forks[philo->id]);
 	p_announce(philo, "has taken a fork");
 	pthread_mutex_lock(&philo->data->forks[(philo->id + 1) % \

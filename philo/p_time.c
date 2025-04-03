@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 17:18:02 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/30 18:16:38 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/04/04 00:09:03 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ void	p_tick_sleep(int wait_time_ms)
 	uintptr_t	start;
 	int			elapsed;
 
+	if (wait_time_ms <= 0)
+		return ;
 	start = p_get_time_ms();
 	elapsed = 0;
 	while (elapsed < wait_time_ms)
