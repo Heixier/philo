@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 17:04:41 by rsiah             #+#    #+#             */
-/*   Updated: 2025/03/31 16:10:21 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/04/07 18:00:33 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int			p_sudo_announce(t_philo *philo, char *msg);
 int			p_get_timestamp(uintptr_t start_time);
 uintptr_t	p_set_start_time(t_data *data);
 uintptr_t	p_get_time_ms(void);
-void		p_tick_sleep(int wait_time_ms);
+void		p_tick_sleep(int wait_time_ms, t_data *data);
 
 // Validate
 int			p_validate(int argc, char **argv);

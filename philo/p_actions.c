@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 15:26:49 by rsiah             #+#    #+#             */
-/*   Updated: 2025/04/04 00:25:57 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/04/07 19:08:06 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,13 @@ static void	p_single_philo(t_philo *philo)
 	pthread_mutex_lock(&philo->data->death_mutex);
 	philo->data->death_flag = 1;
 	pthread_mutex_unlock(&philo->data->death_mutex);
-	p_tick_sleep(philo->data->time_to_die_ms);
+	p_tick_sleep(philo->data->time_to_die_ms, philo->data);
 }
 
 void	p_sleep(t_philo *philo)
 {
 	p_announce(philo, "is sleeping");
-	p_tick_sleep(philo->data->time_to_sleep_ms);
+	p_tick_sleep(philo->data->time_to_sleep_ms, philo->data);
 }
 
 // No thinky it works without it
@@ -61,5 +61,5 @@ void	p_think(t_philo *philo)
 {
 	p_announce(philo, "is thinking");
 	p_tick_sleep(philo->data->time_to_eat_ms - \
-		philo->data->time_to_sleep_ms);
+		philo->data->time_to_sleep_ms, philo->data);
 }

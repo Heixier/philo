@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 18:28:33 by rsiah             #+#    #+#             */
-/*   Updated: 2025/04/03 23:43:43 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/04/07 17:58:39 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,6 @@ void	p_eat(t_philo *philo)
 	philo->last_eat_ms = p_get_time_ms();
 	philo->times_eaten++;
 	pthread_mutex_unlock(&philo->eat_mutex);
-	p_tick_sleep(philo->data->time_to_eat_ms);
+	p_tick_sleep(philo->data->time_to_eat_ms, philo->data);
 	p_unlock_forks(philo);
 }

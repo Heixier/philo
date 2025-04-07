@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 17:18:02 by rsiah             #+#    #+#             */
-/*   Updated: 2025/04/04 00:09:03 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/04/07 18:00:24 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ uintptr_t	p_set_start_time(t_data *data)
 }
 
 // tick more accurately
-void	p_tick_sleep(int wait_time_ms)
+void	p_tick_sleep(int wait_time_ms, t_data *data)
 {
 	uintptr_t	start;
 	int			elapsed;
@@ -40,6 +40,13 @@ void	p_tick_sleep(int wait_time_ms)
 	elapsed = 0;
 	while (elapsed < wait_time_ms)
 	{
+		pthread_mutex_lock(&data->death_mutex);
+		if (data -> death_flag)
+		{
+			pthread_mutex_unlock(&data->death_mutex);
+			break ;
+		}
+		pthread_mutex_unlock(&data->death_mutex);
 		elapsed = p_get_time_ms() - start;
 		usleep(10);
 	}
